@@ -38,11 +38,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${team.name} - World Cup 2026 Profile`,
-    description: `${team.name} World Cup 2026 profile. AI prediction: ${team.tournamentProbability}% chance to win. Squad overview, strengths, weaknesses, and match predictions.`,
+    title: `${team.name} - WC 2026 Profile`,
+    description: `${team.name} WC 2026 profile. AI prediction: ${team.tournamentProbability}% chance to win. Squad overview, strengths, weaknesses, and match predictions.`,
     openGraph: {
-      title: `${team.name} - World Cup 2026 | GoalOracle AI`,
-      description: `${team.name} World Cup 2026 profile with AI predictions and analysis.`,
+      title: `${team.name} - WC 2026 | GoalOracle AI`,
+      description: `${team.name} WC 2026 profile with AI predictions and analysis.`,
     },
   }
 }

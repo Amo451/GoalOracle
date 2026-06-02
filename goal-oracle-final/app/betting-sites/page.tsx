@@ -17,10 +17,10 @@ import { bookmakers } from "@/lib/data"
 
 export const metadata: Metadata = {
   title: "Best Betting Sites for World Cup 2026",
-  description: "Compare the best betting sites for FIFA World Cup 2026. Exclusive bonuses, expert reviews, and detailed comparisons to find your perfect bookmaker.",
+  description: "Compare the best betting sites for WC 2026. Exclusive bonuses, expert reviews, and detailed comparisons to find your perfect bookmaker.",
   openGraph: {
     title: "Best Betting Sites | GoalOracle AI",
-    description: "Compare the best betting sites for World Cup 2026 with exclusive bonuses.",
+    description: "Compare the best betting sites for WC 2026 with exclusive bonuses.",
   },
 }
 
@@ -36,9 +36,9 @@ export default function BettingSitesPage() {
           <Trophy className="h-3 w-3" />
           Best Betting Sites
         </Badge>
-        <h1 className="text-3xl font-bold lg:text-4xl">Best Betting Sites for World Cup 2026</h1>
+        <h1 className="text-3xl font-bold lg:text-4xl">Best Betting Sites for WC 2026</h1>
         <p className="mt-2 text-muted-foreground">
-          Compare top-rated bookmakers with exclusive welcome bonuses and the best odds for World Cup betting
+          Compare top-rated bookmakers with exclusive welcome bonuses and the best odds for WC 26 betting
         </p>
       </div>
 
@@ -185,7 +185,7 @@ export default function BettingSitesPage() {
               </div>
               <h3 className="font-semibold">Odds Quality</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Competitive odds on World Cup matches
+                Competitive odds on WC matches
               </p>
             </CardContent>
           </Card>

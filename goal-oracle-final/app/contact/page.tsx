@@ -10,7 +10,7 @@ import { Mail, MessageCircle, MapPin, Clock } from "lucide-react"
 export const metadata: Metadata = {
   title: "Contact Us | GoalOracle AI",
   description:
-    "Get in touch with GoalOracle AI. We are here to help with your questions about World Cup predictions, betting analysis, and more.",
+    "Get in touch with GoalOracle AI. We are here to help with your questions about football predictions, betting analysis, and more.",
 }
 
 export default function ContactPage() {

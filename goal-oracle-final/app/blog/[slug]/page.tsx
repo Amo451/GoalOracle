@@ -189,7 +189,7 @@ export default async function BlogPostPage({ params }: Props) {
             {/* Article Content */}
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p>
-                The FIFA World Cup 2026 is set to be the largest and most exciting tournament in football history. 
+                The WC 2026 is set to be the largest and most exciting tournament in football history. 
                 With 48 teams competing across three host nations - the United States, Canada, and Mexico - 
                 there has never been more opportunity for both upsets and dominant performances.
               </p>
@@ -224,7 +224,7 @@ export default async function BlogPostPage({ params }: Props) {
               <h2>Conclusion</h2>
               <p>
                 Stay tuned to GoalOracle AI for the latest predictions, analysis, and betting tips 
-                throughout the World Cup 2026 tournament. Our AI continues to learn and improve, 
+                throughout the WC 2026 tournament. Our AI continues to learn and improve, 
                 ensuring you always have access to the most accurate insights.
               </p>
             </div>

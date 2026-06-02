@@ -144,7 +144,7 @@ export default function AboutPage() {
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
               <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-                Join thousands of football fans who trust GoalOracle AI for their World Cup
+                Join thousands of football fans who trust GoalOracle AI for their football
                 predictions. Explore our free predictions or connect with our community on Telegram.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -12,10 +12,10 @@ import { getFeaturedBookmakers, getTeamById, getConfidenceLevel } from "@/lib/da
 
 export const metadata: Metadata = {
   title: "Today's Predictions",
-  description: "Get today's AI-powered FIFA World Cup 2026 match predictions. Safest bets, accumulators, and recommended odds for today's matches.",
+  description: "Get today's AI-powered match predictions. Safest bets, accumulators, and recommended odds for today's matches.",
   openGraph: {
     title: "Today's Predictions | GoalOracle AI",
-    description: "Get today's AI-powered World Cup match predictions and betting tips.",
+    description: "Get today's AI-powered match predictions and betting tips.",
   },
 }
 

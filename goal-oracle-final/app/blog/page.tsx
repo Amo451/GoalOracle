@@ -47,7 +47,7 @@ export default function BlogPage() {
         </Badge>
         <h1 className="text-3xl font-bold lg:text-4xl">Latest Articles</h1>
         <p className="mt-2 text-muted-foreground">
-          Expert analysis, betting tips, and World Cup insights
+          Expert analysis, betting tips, and WC insights
         </p>
       </div>
 

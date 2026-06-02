@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "How to Watch WC 2026 - Streaming Guide",
   description: "Complete guide on how to watch WC 2026 live. Free streaming options, TV channels, and broadcasting rights by country.",
   openGraph: {
-    title: "World Cup 2026 Streaming Guide | GoalOracle AI",
+    title: "WC 2026 Streaming Guide | GoalOracle AI",
     description: "How to watch every WC 2026 match - free streams, TV channels, and more.",
   },
 }

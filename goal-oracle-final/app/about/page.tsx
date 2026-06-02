@@ -6,11 +6,11 @@ import { Brain, Target, TrendingUp, Users, Shield, Zap } from "lucide-react"
 export const metadata: Metadata = {
   title: "About GoalOracle AI | AI-Powered Football Predictions",
   description:
-    "Learn about GoalOracle AI - the leading AI-powered platform for FIFA World Cup 2026 predictions, match analysis, and betting intelligence.",
+    "Learn about GoalOracle AI - the leading AI-powered platform for Football WC 2026 predictions, match analysis, and betting intelligence.",
   openGraph: {
     title: "About GoalOracle AI | AI-Powered Football Predictions",
     description:
-      "Learn about GoalOracle AI - the leading AI-powered platform for FIFA World Cup 2026 predictions, match analysis, and betting intelligence.",
+      "Learn about GoalOracle AI - the leading AI-powered platform for football predictions, match analysis, and betting intelligence.",
     type: "website",
   },
 }
@@ -67,7 +67,7 @@ export default function AboutPage() {
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               We combine cutting-edge artificial intelligence with deep football expertise to deliver
-              the most accurate World Cup predictions. Our mission is to transform how fans engage
+              the most accurate WC predictions. Our mission is to transform how fans engage
               with the beautiful game.
             </p>
           </div>

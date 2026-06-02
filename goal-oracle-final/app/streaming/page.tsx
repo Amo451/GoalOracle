@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/accordion"
 
 export const metadata: Metadata = {
-  title: "How to Watch World Cup 2026 - Streaming Guide",
-  description: "Complete guide on how to watch FIFA World Cup 2026 live. Free streaming options, TV channels, and broadcasting rights by country.",
+  title: "How to Watch WC 2026 - Streaming Guide",
+  description: "Complete guide on how to watch WC 2026 live. Free streaming options, TV channels, and broadcasting rights by country.",
   openGraph: {
     title: "World Cup 2026 Streaming Guide | GoalOracle AI",
-    description: "How to watch every World Cup 2026 match - free streams, TV channels, and more.",
+    description: "How to watch every WC 2026 match - free streams, TV channels, and more.",
   },
 }
 
@@ -90,11 +90,11 @@ const streamingOptions = [
 
 const faqs = [
   {
-    question: "When does the World Cup 2026 start?",
-    answer: "The FIFA World Cup 2026 kicks off in June 2026 with matches held across the United States, Canada, and Mexico. The tournament runs for approximately one month."
+    question: "When does the WC 2026 start?",
+    answer: "The WC 2026 kicks off in June 2026 with matches held across the United States, Canada, and Mexico. The tournament runs for approximately one month."
   },
   {
-    question: "Can I watch the World Cup for free?",
+    question: "Can I watch the WC for free?",
     answer: "Yes! Many countries have free-to-air coverage including the UK (BBC, ITV), Australia (SBS), and the US (FOX, Telemundo). Check our country guide above for your local options."
   },
   {

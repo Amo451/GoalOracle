@@ -22,11 +22,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://goaloracle.ai'),
   title: {
-    default: 'GoalOracle AI - FIFA World Cup 2026 Predictions & Betting Tips',
+    default: 'GoalOracle AI - Worldwide Football Predictions & Betting Tips',
     template: '%s | GoalOracle AI'
   },
-  description: 'AI-powered FIFA World Cup 2026 predictions, expert betting tips, match analysis, and odds comparison. Get the most accurate football predictions with our advanced AI technology.',
-  keywords: ['World Cup 2026', 'football predictions', 'soccer betting tips', 'AI predictions', 'match analysis', 'betting odds', 'FIFA World Cup'],
+  description: 'AI-powered football predictions, expert betting tips, match analysis, and odds comparison. Get the most accurate football predictions with our advanced AI technology.',
+  keywords: ['football predictions', 'soccer betting tips', 'AI predictions', 'match analysis', 'betting odds', 'FIFA World Cup'],
   authors: [{ name: 'GoalOracle AI' }],
   creator: 'GoalOracle AI',
   publisher: 'GoalOracle AI',
@@ -46,21 +46,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://goaloracle.ai',
     siteName: 'GoalOracle AI',
-    title: 'GoalOracle AI - FIFA World Cup 2026 Predictions & Betting Tips',
-    description: 'AI-powered FIFA World Cup 2026 predictions, expert betting tips, match analysis, and odds comparison.',
+    title: 'GoalOracle AI - Worldwide Football Predictions & Betting Tips',
+    description: 'AI-powered football predictions, expert betting tips, match analysis, and odds comparison.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'GoalOracle AI - World Cup Predictions',
+        alt: 'GoalOracle AI - Football Predictions',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GoalOracle AI - FIFA World Cup 2026 Predictions',
-    description: 'AI-powered World Cup predictions and betting tips',
+    title: 'GoalOracle AI - Worldwide Football Predictions & Betting Tips',
+    description: 'AI-powered predictions and betting tips',
     creator: '@goaloracle',
     images: ['/og-image.jpg'],
   },

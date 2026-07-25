@@ -28,7 +28,7 @@ const ACTIVE_COMPETITIONS = [
   COMPETITIONS.CHAMPIONS_LEAGUE,
   COMPETITIONS.EREDIVISIE,
   COMPETITIONS.PRIMEIRA_LIGA,
-] as const;
+];
 
 const USE_MOCK_FALLBACK = true; // Fall back to mock data if API fails
 
@@ -253,17 +253,17 @@ export async function fetchAllMatches(): Promise<Match[]> {
   try {
     // Fetch matches from all competitions
     const allMatches = await fetchFromAllCompetitions(
-      (competition) => getMatches(competition).catch(() => [])
+      (competition: string) => getMatches(competition).catch(() => [])
     );
     
     if (allMatches.length > 0) {
       // Get standings for all competitions
       const allStandings = await fetchFromAllCompetitions(
-        (competition) => getStandings(competition).catch(() => [])
+        (competition: string) => getStandings(competition).catch(() => [])
       );
       // Flatten standings
       const standings = allStandings.flat();
-      return allMatches.map(m => transformApiMatch(m, standings));
+      return allMatches.map((m: ApiMatch) => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch matches from API:", error);
@@ -271,10 +271,10 @@ export async function fetchAllMatches(): Promise<Match[]> {
   
   // Fallback to mock data
   console.log("Using mock data for matches");
-  return mockMatches.map(match => ({
+  return mockMatches.map((match: Match) => ({
     ...match,
     prediction: match.prediction || {
-      winner: "home",
+      winner: "home" as const,
       confidence: 70,
       predictedScore: { home: 2, away: 1 },
       analysis: "Match analysis based on team form and statistics.",
@@ -295,15 +295,15 @@ export async function fetchAllMatches(): Promise<Match[]> {
 export async function fetchUpcomingMatches(limit = 10): Promise<Match[]> {
   try {
     const allMatches = await fetchFromAllCompetitions(
-      (competition) => getUpcomingMatches(competition, limit).catch(() => [])
+      (competition: string) => getUpcomingMatches(competition, limit).catch(() => [])
     );
     
     if (allMatches.length > 0) {
       const allStandings = await fetchFromAllCompetitions(
-        (competition) => getStandings(competition).catch(() => [])
+        (competition: string) => getStandings(competition).catch(() => [])
       );
       const standings = allStandings.flat();
-      return allMatches.map(m => transformApiMatch(m, standings)).slice(0, limit);
+      return allMatches.map((m: ApiMatch) => transformApiMatch(m, standings)).slice(0, limit);
     }
   } catch (error) {
     console.error("Failed to fetch upcoming matches:", error);
@@ -311,12 +311,12 @@ export async function fetchUpcomingMatches(limit = 10): Promise<Match[]> {
   
   // Fallback to mock data
   return mockMatches
-    .filter(m => new Date(m.date) >= new Date())
+    .filter((m: Match) => new Date(m.date) >= new Date())
     .slice(0, limit)
-    .map(match => ({
+    .map((match: Match) => ({
       ...match,
       prediction: match.prediction || {
-        winner: "home",
+        winner: "home" as const,
         confidence: 70,
         predictedScore: { home: 2, away: 1 },
         analysis: "Upcoming match analysis.",
@@ -329,15 +329,15 @@ export async function fetchUpcomingMatches(limit = 10): Promise<Match[]> {
 export async function fetchTodaysMatches(): Promise<Match[]> {
   try {
     const allMatches = await fetchFromAllCompetitions(
-      (competition) => getTodaysMatches(competition).catch(() => [])
+      (competition: string) => getTodaysMatches(competition).catch(() => [])
     );
     
     if (allMatches.length > 0) {
       const allStandings = await fetchFromAllCompetitions(
-        (competition) => getStandings(competition).catch(() => [])
+        (competition: string) => getStandings(competition).catch(() => [])
       );
       const standings = allStandings.flat();
-      return allMatches.map(m => transformApiMatch(m, standings));
+      return allMatches.map((m: ApiMatch) => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch today's matches:", error);
@@ -345,22 +345,22 @@ export async function fetchTodaysMatches(): Promise<Match[]> {
   
   // Fallback to mock data
   const today = new Date().toISOString().split("T")[0];
-  return mockMatches.filter(m => m.date === today);
+  return mockMatches.filter((m: Match) => m.date === today);
 }
 
 // Fetch live matches from all competitions
 export async function fetchLiveMatches(): Promise<Match[]> {
   try {
     const allMatches = await fetchFromAllCompetitions(
-      (competition) => getLiveMatches(competition).catch(() => [])
+      (competition: string) => getLiveMatches(competition).catch(() => [])
     );
     
     if (allMatches.length > 0) {
       const allStandings = await fetchFromAllCompetitions(
-        (competition) => getStandings(competition).catch(() => [])
+        (competition: string) => getStandings(competition).catch(() => [])
       );
       const standings = allStandings.flat();
-      return allMatches.map(m => transformApiMatch(m, standings));
+      return allMatches.map((m: ApiMatch) => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch live matches:", error);
@@ -373,28 +373,28 @@ export async function fetchLiveMatches(): Promise<Match[]> {
 export async function fetchMatchBySlug(slug: string): Promise<Match | null> {
   try {
     const matches = await fetchAllMatches();
-    const match = matches.find(m => m.slug === slug);
+    const match = matches.find((m: Match) => m.slug === slug);
     if (match) return match;
   } catch (error) {
     console.error("Failed to fetch match:", error);
   }
   
-  return mockMatches.find(m => m.slug === slug) || null;
+  return mockMatches.find((m: Match) => m.slug === slug) || null;
 }
 
 // Fetch all teams from all competitions
 export async function fetchAllTeams(): Promise<Team[]> {
   try {
     const allTeams = await fetchFromAllCompetitions(
-      (competition) => getTeams(competition).catch(() => [])
+      (competition: string) => getTeams(competition).catch(() => [])
     );
     
     if (allTeams.length > 0) {
       const allStandings = await fetchFromAllCompetitions(
-        (competition) => getStandings(competition).catch(() => [])
+        (competition: string) => getStandings(competition).catch(() => [])
       );
       const standings = allStandings.flat();
-      return allTeams.map(t => transformApiTeam(t, standings));
+      return allTeams.map((t: ApiTeam) => transformApiTeam(t, standings));
     }
   } catch (error) {
     console.error("Failed to fetch teams from API:", error);
@@ -402,7 +402,7 @@ export async function fetchAllTeams(): Promise<Team[]> {
   
   // Fallback to mock data
   console.log("Using mock data for teams");
-  return mockTeams.map(team => ({
+  return mockTeams.map((team: Team) => ({
     ...team,
     league: team.league || "European League",
     powerRating: team.powerRating || 75,
@@ -430,13 +430,13 @@ export async function fetchAllTeams(): Promise<Team[]> {
 export async function fetchTeamById(id: string): Promise<Team | null> {
   try {
     const teams = await fetchAllTeams();
-    const team = teams.find(t => t.id === id || t.code?.toLowerCase() === id.toLowerCase());
+    const team = teams.find((t: Team) => t.id === id || t.code?.toLowerCase() === id.toLowerCase());
     if (team) return team;
   } catch (error) {
     console.error("Failed to fetch team:", error);
   }
   
-  return mockTeams.find(t => t.id === id) || null;
+  return mockTeams.find((t: Team) => t.id === id) || null;
 }
 
 // Fetch team's matches
@@ -445,15 +445,15 @@ export async function fetchTeamMatches(teamId: string, limit = 10): Promise<Matc
     const numericId = parseInt(teamId, 10);
     if (!isNaN(numericId)) {
       const allMatches = await fetchFromAllCompetitions(
-        (competition) => getTeamMatches(numericId, { limit }).catch(() => [])
+        (competition: string) => getTeamMatches(numericId, { limit }).catch(() => [])
       );
       
       if (allMatches.length > 0) {
         const allStandings = await fetchFromAllCompetitions(
-          (competition) => getStandings(competition).catch(() => [])
+          (competition: string) => getStandings(competition).catch(() => [])
         );
         const standings = allStandings.flat();
-        return allMatches.map(m => transformApiMatch(m, standings)).slice(0, limit);
+        return allMatches.map((m: ApiMatch) => transformApiMatch(m, standings)).slice(0, limit);
       }
     }
   } catch (error) {
@@ -462,7 +462,7 @@ export async function fetchTeamMatches(teamId: string, limit = 10): Promise<Matc
   
   // Fallback to mock data
   return mockMatches.filter(
-    m => m.homeTeam === teamId || m.awayTeam === teamId
+    (m: Match) => m.homeTeam === teamId || m.awayTeam === teamId
   ).slice(0, limit);
 }
 
@@ -498,18 +498,18 @@ export async function fetchStandings(): Promise<{
 }[]> {
   try {
     const allStandings = await fetchFromAllCompetitions(
-      (competition) => getStandings(competition).catch(() => [])
+      (competition: string) => getStandings(competition).catch(() => [])
     );
     
     if (allStandings.length > 0) {
       const allTeams = await fetchFromAllCompetitions(
-        (competition) => getTeams(competition).catch(() => [])
+        (competition: string) => getTeams(competition).catch(() => [])
       );
       
-      return allStandings.map(standing => ({
+      return allStandings.map((standing: any) => ({
         group: standing.group || standing.stage,
-        teams: standing.table.map(entry => {
-          const apiTeam = allTeams.find(t => t.id === entry.team.id);
+        teams: standing.table.map((entry: any) => {
+          const apiTeam = allTeams.find((t: ApiTeam) => t.id === entry.team.id);
           return {
             team: transformApiTeam(apiTeam || entry.team as unknown as ApiTeam, allStandings),
             points: entry.points,
@@ -524,12 +524,12 @@ export async function fetchStandings(): Promise<{
   }
   
   // Mock standings from teams
-  const groups = [...new Set(mockTeams.map(t => t.group))];
-  return groups.map(group => ({
+  const groups = [...new Set(mockTeams.map((t: Team) => t.group))];
+  return groups.map((group: string) => ({
     group: `Group ${group}`,
     teams: mockTeams
-      .filter(t => t.group === group)
-      .map(team => ({
+      .filter((t: Team) => t.group === group)
+      .map((team: Team) => ({
         team: {
           ...team,
           league: team.league || "European League",

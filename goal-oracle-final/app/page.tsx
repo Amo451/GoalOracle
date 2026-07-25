@@ -56,7 +56,7 @@ export default async function HomePage() {
               </Badge>
               <h2 className="text-2xl font-bold lg:text-3xl">Featured Predictions</h2>
               <p className="mt-1 text-muted-foreground">
-                Our top AI-powered match predictions for the WC 2026
+                Our top AI-powered match predictions
               </p>
             </div>
             <Button asChild variant="ghost" className="gap-1">
@@ -185,13 +185,13 @@ export default async function HomePage() {
             <div className="relative flex flex-col items-center text-center">
               <Badge variant="secondary" className="mb-4 gap-1">
                 <Calendar className="h-3 w-3" />
-                WC 2026
+                New Season prediction
               </Badge>
               <h2 className="max-w-2xl text-3xl font-bold lg:text-4xl">
                 Ready to Start Winning?
               </h2>
               <p className="mt-4 max-w-xl text-muted-foreground">
-                Join thousands of bettors who trust GoalOracle AI for their WC 2026 predictions. 
+                Join thousands of bettors who trust GoalOracle AI for their daily football predictions. 
                 Get started today - it&apos;s completely free.
               </p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">

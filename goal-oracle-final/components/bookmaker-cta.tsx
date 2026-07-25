@@ -15,7 +15,7 @@ export function BookmakerCTA() {
           <div>
             <h2 className="text-2xl font-bold lg:text-3xl">Best Betting Sites</h2>
             <p className="mt-1 text-muted-foreground">
-              Top-rated bookmakers for World Cup betting
+              Top-rated bookmakers 2026/2027
             </p>
           </div>
           <Button asChild variant="ghost" className="gap-1">

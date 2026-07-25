@@ -6,7 +6,7 @@ import { Brain, Target, TrendingUp, Users, Shield, Zap } from "lucide-react"
 export const metadata: Metadata = {
   title: "About GoalOracle AI | AI-Powered Football Predictions",
   description:
-    "Learn about GoalOracle AI - the leading AI-powered platform for Football WC 2026 predictions, match analysis, and betting intelligence.",
+    "Learn about GoalOracle AI - the leading AI-powered platform for Football predictions, match analysis, and betting intelligence.",
   openGraph: {
     title: "About GoalOracle AI | AI-Powered Football Predictions",
     description:

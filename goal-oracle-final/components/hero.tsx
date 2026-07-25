@@ -68,7 +68,7 @@ export function Hero() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                 <Users className="h-6 w-6 text-primary" />
               </div>
-              <span className="mt-2 text-2xl font-bold">50K+</span>
+              <span className="mt-2 text-2xl font-bold">5K+</span>
               <span className="text-sm text-muted-foreground">Users</span>
             </div>
             <div className="flex flex-col items-center">

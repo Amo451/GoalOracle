@@ -19,7 +19,7 @@ import {
 import { teams as mockTeams, matches as mockMatches, type Team, type Match } from "./data";
 
 // Configuration
-const ACTIVE_COMPETITION = COMPETITIONS.WORLD_CUP;
+const ACTIVE_COMPETITION = COMPETITIONS.PREMIER_LEAGUE, LALIGA, BUNDESLIGA, CHAMPIONS_LEAGUE;
 const USE_MOCK_FALLBACK = true; // Fall back to mock data if API fails
 
 // Transform API match to our Match interface

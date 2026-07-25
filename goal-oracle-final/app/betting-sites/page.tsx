@@ -16,8 +16,8 @@ import {
 import { bookmakers } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "Best Betting Sites for World Cup 2026",
-  description: "Compare the best betting sites for WC 2026. Exclusive bonuses, expert reviews, and detailed comparisons to find your perfect bookmaker.",
+  title: "Best Betting Sites Across Europe",
+  description: "Compare the best betting sites for football across Europe. Exclusive bonuses, expert reviews, and detailed comparisons to find your perfect bookmaker.",
   openGraph: {
     title: "Best Betting Sites | GoalOracle AI",
     description: "Compare the best betting sites 2026 with exclusive bonuses.",

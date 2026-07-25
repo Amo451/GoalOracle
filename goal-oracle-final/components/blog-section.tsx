@@ -27,7 +27,7 @@ export function BlogSection({ posts, showTitle = true }: BlogSectionProps) {
             <div>
               <h2 className="text-2xl font-bold lg:text-3xl">Latest Articles</h2>
               <p className="mt-1 text-muted-foreground">
-                Expert analysis, betting tips, and World Cup insights
+                Expert analysis and betting tips
               </p>
             </div>
             <Button asChild variant="ghost" className="gap-1">

@@ -7,11 +7,11 @@ import { Progress } from "@/components/ui/progress"
 import { teams } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "World Cup Teams",
-  description: "Browse all FIFA World Cup 2026 teams. Get squad information, AI predictions, tournament probabilities, and detailed analysis for each team.",
+  title: "Football Teams",
+  description: "Browse all top teams across Europe. Get squad information, AI predictions, tournament probabilities, and detailed analysis for each team.",
   openGraph: {
-    title: "World Cup 2026 Teams | GoalOracle AI",
-    description: "Browse all FIFA World Cup 2026 teams with AI predictions and analysis.",
+    title: "Football Teams | GoalOracle AI",
+    description: "Browse teams with AI predictions and analysis.",
   },
 }
 
@@ -27,9 +27,9 @@ export default function TeamsPage() {
           <Users className="h-3 w-3" />
           Teams
         </Badge>
-        <h1 className="text-3xl font-bold lg:text-4xl">World Cup 2026 Teams</h1>
+        <h1 className="text-3xl font-bold lg:text-4xl">Premier League Teams</h1>
         <p className="mt-2 text-muted-foreground">
-          Explore all teams competing in the FIFA World Cup 2026 with AI-powered predictions
+          Explore all teams competing in 2026 premier league new season with AI-powered predictions
         </p>
       </div>
 

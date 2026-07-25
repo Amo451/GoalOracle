@@ -21,8 +21,8 @@ export function Hero() {
 
           {/* Headline */}
           <h1 className="max-w-4xl text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="gradient-text">Smarter Football </span> Predictions. {" "}
-            <span className="gradient-text">Better Betting </span> Decisions.
+            <span className="gradient-text">Smarter Football </span> Predictions {" "}
+            <span className="gradient-text">Better Betting </span> Decisions
           </h1>
 
           {/* Subheadline */}
@@ -36,7 +36,7 @@ export function Hero() {
             <Button asChild size="lg" className="gap-2">
               <Link href="/today-predictions">
                 <Calendar className="h-5 w-5" />
-                Today&apos;s Predictions
+                Today&apos;s AI Picks
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

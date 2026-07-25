@@ -7,10 +7,10 @@ import { fetchAllMatches, checkApiStatus } from "@/lib/data-api"
 
 export const metadata: Metadata = {
   title: "All Match Predictions",
-  description: "Browse all AI-powered WC 2026 match predictions. Get expert analysis, betting tips, and odds comparison for every match.",
+  description: "Browse all AI-powered 2026 match predictions. Get expert analysis, betting tips, and odds comparison for every match.",
   openGraph: {
     title: "All Match Predictions | GoalOracle AI",
-    description: "Browse all AI-powered WC 2026 match predictions.",
+    description: "Browse all AI-powered match predictions.",
   },
 }
 
@@ -51,7 +51,7 @@ export default async function PredictionsPage() {
         <Badge variant="secondary" className="mb-2">Predictions</Badge>
         <h1 className="text-3xl font-bold lg:text-4xl">All Match Predictions</h1>
         <p className="mt-2 text-muted-foreground">
-          Browse our AI-powered predictions for all FIFA World Cup 2026 matches
+          Browse our AI-powered predictions 
         </p>
       </div>
 

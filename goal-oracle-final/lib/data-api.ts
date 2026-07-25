@@ -1,4 +1,4 @@
-// Data layer that integrates Football-Data.org API with fallback to mock data
+// Data layer that integrates Football API with fallback to mock data
 import {
   getMatches,
   getTeams,
@@ -18,9 +18,50 @@ import {
 } from "./football-api";
 import { teams as mockTeams, matches as mockMatches, type Team, type Match } from "./data";
 
-// Configuration
-const ACTIVE_COMPETITION = COMPETITIONS.PREMIER_LEAGUE, LALIGA, BUNDESLIGA, CHAMPIONS_LEAGUE;
+// Configuration - European Top Leagues
+const ACTIVE_COMPETITIONS = [
+  COMPETITIONS.PREMIER_LEAGUE,
+  COMPETITIONS.LA_LIGA,
+  COMPETITIONS.BUNDESLIGA,
+  COMPETITIONS.SERIE_A,
+  COMPETITIONS.LIGUE_1,
+  COMPETITIONS.CHAMPIONS_LEAGUE,
+  COMPETITIONS.EREDIVISIE,
+  COMPETITIONS.PRIMEIRA_LIGA,
+] as const;
+
 const USE_MOCK_FALLBACK = true; // Fall back to mock data if API fails
+
+// Helper to fetch from all active competitions
+async function fetchFromAllCompetitions<T>(
+  fetchFn: (competition: string) => Promise<T[]>,
+  filterUnique = true
+): Promise<T[]> {
+  const results: T[] = [];
+  const seenIds = new Set<number>();
+  
+  for (const competition of ACTIVE_COMPETITIONS) {
+    try {
+      const data = await fetchFn(competition).catch(() => []);
+      if (filterUnique) {
+        // Filter out duplicates by ID
+        for (const item of data) {
+          const itemId = (item as any).id;
+          if (itemId && !seenIds.has(itemId)) {
+            seenIds.add(itemId);
+            results.push(item);
+          }
+        }
+      } else {
+        results.push(...data);
+      }
+    } catch (error) {
+      console.error(`Failed to fetch from ${competition}:`, error);
+    }
+  }
+  
+  return results;
+}
 
 // Transform API match to our Match interface
 function transformApiMatch(
@@ -166,7 +207,7 @@ function transformApiTeam(apiTeam: ApiTeam, standings?: Awaited<ReturnType<typeo
     code: apiTeam.tla,
     flag: apiTeam.crest || getTeamFlagUrl(apiTeam.tla),
     group: mockTeam?.group || "",
-    league: "World Cup", // Add league field
+    league: mockTeam?.league || "European League",
     ranking: position || mockTeam?.ranking || 0,
     powerRating: mockTeam?.powerRating || 75,
     overallRating: mockTeam?.overallRating || 75,
@@ -185,7 +226,7 @@ function transformApiTeam(apiTeam: ApiTeam, standings?: Awaited<ReturnType<typeo
     weaknesses: mockTeam?.weaknesses || ["TBD based on performance"],
     starPlayers: mockTeam?.starPlayers || [],
     tournamentProbability: mockTeam?.tournamentProbability || 5,
-    description: mockTeam?.description || `${apiTeam.name} - competing in the World Cup.`,
+    description: mockTeam?.description || `${apiTeam.name} - competing in European football.`,
     formation: mockTeam?.formation || "4-3-3",
     playingStyle: mockTeam?.playingStyle || "Possession-based",
     attackFocus: mockTeam?.attackFocus || "Wide play",
@@ -207,22 +248,28 @@ function transformApiTeam(apiTeam: ApiTeam, standings?: Awaited<ReturnType<typeo
   } as Team & { _apiData: unknown };
 }
 
-// Fetch all matches with API, fallback to mock
+// Fetch all matches from all active competitions
 export async function fetchAllMatches(): Promise<Match[]> {
   try {
-    const [apiMatches, standings] = await Promise.all([
-      getMatches(ACTIVE_COMPETITION).catch(() => []),
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-    ]);
+    // Fetch matches from all competitions
+    const allMatches = await fetchFromAllCompetitions(
+      (competition) => getMatches(competition).catch(() => [])
+    );
     
-    if (apiMatches && apiMatches.length > 0) {
-      return apiMatches.map(m => transformApiMatch(m, standings));
+    if (allMatches.length > 0) {
+      // Get standings for all competitions
+      const allStandings = await fetchFromAllCompetitions(
+        (competition) => getStandings(competition).catch(() => [])
+      );
+      // Flatten standings
+      const standings = allStandings.flat();
+      return allMatches.map(m => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch matches from API:", error);
   }
   
-  // Always fallback to mock data
+  // Fallback to mock data
   console.log("Using mock data for matches");
   return mockMatches.map(match => ({
     ...match,
@@ -244,22 +291,25 @@ export async function fetchAllMatches(): Promise<Match[]> {
   }));
 }
 
-// Fetch upcoming matches
+// Fetch upcoming matches from all competitions
 export async function fetchUpcomingMatches(limit = 10): Promise<Match[]> {
   try {
-    const [apiMatches, standings] = await Promise.all([
-      getUpcomingMatches(ACTIVE_COMPETITION, limit).catch(() => []),
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-    ]);
+    const allMatches = await fetchFromAllCompetitions(
+      (competition) => getUpcomingMatches(competition, limit).catch(() => [])
+    );
     
-    if (apiMatches && apiMatches.length > 0) {
-      return apiMatches.map(m => transformApiMatch(m, standings));
+    if (allMatches.length > 0) {
+      const allStandings = await fetchFromAllCompetitions(
+        (competition) => getStandings(competition).catch(() => [])
+      );
+      const standings = allStandings.flat();
+      return allMatches.map(m => transformApiMatch(m, standings)).slice(0, limit);
     }
   } catch (error) {
     console.error("Failed to fetch upcoming matches:", error);
   }
   
-  // Always fallback to mock data
+  // Fallback to mock data
   return mockMatches
     .filter(m => new Date(m.date) >= new Date())
     .slice(0, limit)
@@ -275,42 +325,47 @@ export async function fetchUpcomingMatches(limit = 10): Promise<Match[]> {
     }));
 }
 
-// Fetch today's matches
+// Fetch today's matches from all competitions
 export async function fetchTodaysMatches(): Promise<Match[]> {
   try {
-    const [apiMatches, standings] = await Promise.all([
-      getTodaysMatches(ACTIVE_COMPETITION).catch(() => []),
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-    ]);
+    const allMatches = await fetchFromAllCompetitions(
+      (competition) => getTodaysMatches(competition).catch(() => [])
+    );
     
-    if (apiMatches && apiMatches.length > 0) {
-      return apiMatches.map(m => transformApiMatch(m, standings));
+    if (allMatches.length > 0) {
+      const allStandings = await fetchFromAllCompetitions(
+        (competition) => getStandings(competition).catch(() => [])
+      );
+      const standings = allStandings.flat();
+      return allMatches.map(m => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch today's matches:", error);
   }
   
-  // Always fallback to mock data
+  // Fallback to mock data
   const today = new Date().toISOString().split("T")[0];
   return mockMatches.filter(m => m.date === today);
 }
 
-// Fetch live matches
+// Fetch live matches from all competitions
 export async function fetchLiveMatches(): Promise<Match[]> {
   try {
-    const [apiMatches, standings] = await Promise.all([
-      getLiveMatches(ACTIVE_COMPETITION).catch(() => []),
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-    ]);
+    const allMatches = await fetchFromAllCompetitions(
+      (competition) => getLiveMatches(competition).catch(() => [])
+    );
     
-    if (apiMatches && apiMatches.length > 0) {
-      return apiMatches.map(m => transformApiMatch(m, standings));
+    if (allMatches.length > 0) {
+      const allStandings = await fetchFromAllCompetitions(
+        (competition) => getStandings(competition).catch(() => [])
+      );
+      const standings = allStandings.flat();
+      return allMatches.map(m => transformApiMatch(m, standings));
     }
   } catch (error) {
     console.error("Failed to fetch live matches:", error);
   }
   
-  // Return empty array for live matches if no API data
   return [];
 }
 
@@ -327,26 +382,29 @@ export async function fetchMatchBySlug(slug: string): Promise<Match | null> {
   return mockMatches.find(m => m.slug === slug) || null;
 }
 
-// Fetch all teams
+// Fetch all teams from all competitions
 export async function fetchAllTeams(): Promise<Team[]> {
   try {
-    const [apiTeams, standings] = await Promise.all([
-      getTeams(ACTIVE_COMPETITION).catch(() => []),
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-    ]);
+    const allTeams = await fetchFromAllCompetitions(
+      (competition) => getTeams(competition).catch(() => [])
+    );
     
-    if (apiTeams && apiTeams.length > 0) {
-      return apiTeams.map(t => transformApiTeam(t, standings));
+    if (allTeams.length > 0) {
+      const allStandings = await fetchFromAllCompetitions(
+        (competition) => getStandings(competition).catch(() => [])
+      );
+      const standings = allStandings.flat();
+      return allTeams.map(t => transformApiTeam(t, standings));
     }
   } catch (error) {
     console.error("Failed to fetch teams from API:", error);
   }
   
-  // Always fallback to mock data with enhanced fields
+  // Fallback to mock data
   console.log("Using mock data for teams");
   return mockTeams.map(team => ({
     ...team,
-    league: team.league || "World Cup",
+    league: team.league || "European League",
     powerRating: team.powerRating || 75,
     overallRating: team.overallRating || 75,
     aiRating: team.aiRating || 75,
@@ -386,20 +444,23 @@ export async function fetchTeamMatches(teamId: string, limit = 10): Promise<Matc
   try {
     const numericId = parseInt(teamId, 10);
     if (!isNaN(numericId)) {
-      const [apiMatches, standings] = await Promise.all([
-        getTeamMatches(numericId, { limit }).catch(() => []),
-        getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-      ]);
+      const allMatches = await fetchFromAllCompetitions(
+        (competition) => getTeamMatches(numericId, { limit }).catch(() => [])
+      );
       
-      if (apiMatches && apiMatches.length > 0) {
-        return apiMatches.map(m => transformApiMatch(m, standings));
+      if (allMatches.length > 0) {
+        const allStandings = await fetchFromAllCompetitions(
+          (competition) => getStandings(competition).catch(() => [])
+        );
+        const standings = allStandings.flat();
+        return allMatches.map(m => transformApiMatch(m, standings)).slice(0, limit);
       }
     }
   } catch (error) {
     console.error("Failed to fetch team matches:", error);
   }
   
-  // Always fallback to mock data
+  // Fallback to mock data
   return mockMatches.filter(
     m => m.homeTeam === teamId || m.awayTeam === teamId
   ).slice(0, limit);
@@ -430,24 +491,27 @@ export async function fetchHeadToHead(matchId: string): Promise<{
   };
 }
 
-// Fetch standings/groups
+// Fetch standings from all competitions
 export async function fetchStandings(): Promise<{
   group: string;
   teams: { team: Team; points: number; played: number; gd: number }[];
 }[]> {
   try {
-    const [standings, apiTeams] = await Promise.all([
-      getStandings(ACTIVE_COMPETITION).catch(() => undefined),
-      getTeams(ACTIVE_COMPETITION).catch(() => []),
-    ]);
+    const allStandings = await fetchFromAllCompetitions(
+      (competition) => getStandings(competition).catch(() => [])
+    );
     
-    if (standings && standings.length > 0) {
-      return standings.map(standing => ({
+    if (allStandings.length > 0) {
+      const allTeams = await fetchFromAllCompetitions(
+        (competition) => getTeams(competition).catch(() => [])
+      );
+      
+      return allStandings.map(standing => ({
         group: standing.group || standing.stage,
         teams: standing.table.map(entry => {
-          const apiTeam = apiTeams.find(t => t.id === entry.team.id);
+          const apiTeam = allTeams.find(t => t.id === entry.team.id);
           return {
-            team: transformApiTeam(apiTeam || entry.team as unknown as ApiTeam, standings),
+            team: transformApiTeam(apiTeam || entry.team as unknown as ApiTeam, allStandings),
             points: entry.points,
             played: entry.playedGames,
             gd: entry.goalDifference,
@@ -468,7 +532,7 @@ export async function fetchStandings(): Promise<{
       .map(team => ({
         team: {
           ...team,
-          league: team.league || "World Cup",
+          league: team.league || "European League",
           powerRating: team.powerRating || 75,
           overallRating: team.overallRating || 75,
         },
@@ -483,26 +547,32 @@ export async function fetchStandings(): Promise<{
 // Check if API is available and working
 export async function checkApiStatus(): Promise<{
   available: boolean;
-  competition: string | null;
+  competitions: string[];
   matchCount: number;
   error?: string;
 }> {
-  try {
-    const matches = await getMatches(ACTIVE_COMPETITION).catch(() => []);
-    return {
-      available: matches.length > 0,
-      competition: ACTIVE_COMPETITION,
-      matchCount: matches.length,
-    };
-  } catch (error) {
-    return {
-      available: false,
-      competition: null,
-      matchCount: 0,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
+  const availableCompetitions: string[] = [];
+  let totalMatches = 0;
+  
+  for (const competition of ACTIVE_COMPETITIONS) {
+    try {
+      const matches = await getMatches(competition).catch(() => []);
+      if (matches.length > 0) {
+        availableCompetitions.push(competition);
+        totalMatches += matches.length;
+      }
+    } catch (error) {
+      console.error(`Failed to check ${competition}:`, error);
+    }
   }
+  
+  return {
+    available: availableCompetitions.length > 0,
+    competitions: availableCompetitions,
+    matchCount: totalMatches,
+    error: availableCompetitions.length === 0 ? "No competitions available" : undefined,
+  };
 }
 
-// Export the active competition for reference
-export { ACTIVE_COMPETITION };
+// Export the active competitions for reference
+export { ACTIVE_COMPETITIONS };

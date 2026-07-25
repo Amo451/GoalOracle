@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/accordion"
 
 export const metadata: Metadata = {
-  title: "How to Watch WC 2026 - Streaming Guide",
-  description: "Complete guide on how to watch WC 2026 live. Free streaming options, TV channels, and broadcasting rights by country.",
+  title: "How to Watch New Season's Top Leagues Across Europe - Streaming Guide",
+  description: "Complete guide on how to watch football live. Free streaming options, TV channels, and broadcasting rights by country.",
   openGraph: {
-    title: "WC 2026 Streaming Guide | GoalOracle AI",
-    description: "How to watch every WC 2026 match - free streams, TV channels, and more.",
+    title: "New Season's Streaming Guide | GoalOracle AI",
+    description: "How to watch every top European League 2026 - free streams, TV channels, and more.",
   },
 }
 
@@ -90,11 +90,11 @@ const streamingOptions = [
 
 const faqs = [
   {
-    question: "When does the WC 2026 start?",
+    question: "When does the 2026/2027 new season start?",
     answer: "The WC 2026 kicks off in June 2026 with matches held across the United States, Canada, and Mexico. The tournament runs for approximately one month."
   },
   {
-    question: "Can I watch the WC for free?",
+    question: "Can I watch top European leagues for free?",
     answer: "Yes! Many countries have free-to-air coverage including the UK (BBC, ITV), Australia (SBS), and the US (FOX, Telemundo). Check our country guide above for your local options."
   },
   {
@@ -122,7 +122,7 @@ export default function StreamingGuidePage() {
         </Badge>
         <h1 className="text-3xl font-bold lg:text-4xl">How to Watch World Cup 2026</h1>
         <p className="mt-2 text-muted-foreground">
-          Your complete guide to watching every FIFA World Cup 2026 match - free streams, TV channels, and broadcasting by country
+          Your complete guide to watching every 2026-27 season game - free streams, TV channels, and broadcasting by country
         </p>
       </div>
 
@@ -272,7 +272,7 @@ export default function StreamingGuidePage() {
           <h2 className="text-2xl font-bold mb-2">Ready to Watch?</h2>
           <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
             Now that you know how to watch, get our AI-powered predictions for every match 
-            to enhance your World Cup experience.
+            to enhance your experience.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg">

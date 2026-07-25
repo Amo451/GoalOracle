@@ -48,7 +48,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              AI-powered football predictions for the FIFA World Cup 2026. 
+              AI-powered football predictions. 
               Get expert analysis, betting tips, and match previews.
             </p>
             

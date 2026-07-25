@@ -9,10 +9,10 @@ import { blogPosts } from "@/lib/data"
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "WC 2026 betting tips, predictions analysis, streaming guides, and expert football insights. Stay updated with the latest World Cup news.",
+  description: "Betting tips, predictions analysis, streaming guides, and expert football insights",
   openGraph: {
     title: "Blog | GoalOracle AI",
-    description: "WC 2026 betting tips, predictions, and expert analysis.",
+    description: "2026 football betting tips, predictions, and expert analysis.",
   },
 }
 

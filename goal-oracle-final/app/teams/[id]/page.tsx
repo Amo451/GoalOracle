@@ -78,8 +78,12 @@ export default async function TeamPage({ params }: Props) {
     notFound()
   }
 
-  // Get all matches for this team
-  const teamMatches = matches.filter(
+  // Safe league name with fallback
+  const leagueName = team.league || 'European League'
+  const leagueSlug = leagueName.toLowerCase().replace(/\s+/g, '-')
+
+  // Get all matches for this team with safe fallback
+  const teamMatches = (matches || []).filter(
     m => m.homeTeam === team.id || m.awayTeam === team.id
   )
 
@@ -96,14 +100,14 @@ export default async function TeamPage({ params }: Props) {
     : '0'
 
   // Calculate form trend (last 5 matches)
-  const formTrend = team.form.slice(0, 5)
+  const formTrend = (team.form || []).slice(0, 5)
   const formPoints = formTrend.reduce((acc, result) => {
     if (result === 'W') return acc + 3
     if (result === 'D') return acc + 1
     return acc
   }, 0)
 
-  // Get top scorers from team data
+  // Get top scorers from team data with fallback
   const topScorers = team.topScorers || [
     { name: 'Player 1', goals: 12, assists: 4 },
     { name: 'Player 2', goals: 8, assists: 6 },
@@ -123,12 +127,16 @@ export default async function TeamPage({ params }: Props) {
       opponent: opponent?.name || 'Unknown',
       opponentFlag: opponent?.flag || '🏳️',
       isHome,
-      scored,
-      conceded,
+      scored: scored || 0,
+      conceded: conceded || 0,
       result: scored > conceded ? 'W' : scored < conceded ? 'L' : 'D',
-      date: match.date
+      date: match.date || 'TBD'
     }
   })
+
+  // Safe stats with fallbacks
+  const stats = team.stats || { wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, points: 0, goalDifference: 0 }
+  const totalGames = (stats.wins || 0) + (stats.draws || 0) + (stats.losses || 0) || 1
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
@@ -138,8 +146,8 @@ export default async function TeamPage({ params }: Props) {
         <ChevronRight className="h-4 w-4" />
         <Link href="/leagues" className="hover:text-foreground transition-colors">Leagues</Link>
         <ChevronRight className="h-4 w-4" />
-        <Link href={`/leagues/${team.league.toLowerCase()}`} className="hover:text-foreground transition-colors">
-          {team.league}
+        <Link href={`/leagues/${leagueSlug}`} className="hover:text-foreground transition-colors">
+          {leagueName}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span className="text-foreground font-medium">{team.name}</span>
@@ -147,9 +155,9 @@ export default async function TeamPage({ params }: Props) {
 
       {/* Back Button */}
       <Button asChild variant="ghost" className="mb-6 gap-2 hover:bg-secondary">
-        <Link href={`/leagues/${team.league.toLowerCase()}`}>
+        <Link href={`/leagues/${leagueSlug}`}>
           <ArrowLeft className="h-4 w-4" />
-          Back to {team.league}
+          Back to {leagueName}
         </Link>
       </Button>
 
@@ -158,39 +166,39 @@ export default async function TeamPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
         <CardContent className="relative p-6 lg:p-8">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <span className="text-7xl lg:text-9xl select-none">{team.flag}</span>
+            <span className="text-7xl lg:text-9xl select-none">{team.flag || '🏳️'}</span>
             
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold lg:text-4xl">{team.name}</h1>
                 <Badge variant="secondary" className="gap-1">
                   <Award className="h-3 w-3" />
-                  {team.league}
+                  {leagueName}
                 </Badge>
                 {team.code && <Badge variant="outline">{team.code}</Badge>}
               </div>
               
-              <p className="text-muted-foreground mb-4 max-w-2xl">{team.description}</p>
+              <p className="text-muted-foreground mb-4 max-w-2xl">{team.description || `Professional football team competing in ${leagueName}.`}</p>
               
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold">#{team.ranking}</p>
+                  <p className="text-2xl font-bold">#{team.ranking || 'N/A'}</p>
                   <p className="text-xs text-muted-foreground">League Position</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold text-primary">{team.powerRating}%</p>
+                  <p className="text-2xl font-bold text-primary">{team.powerRating || 0}%</p>
                   <p className="text-xs text-muted-foreground">Power Rating</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold text-emerald-500">{team.stats.goalsFor}</p>
+                  <p className="text-2xl font-bold text-emerald-500">{stats.goalsFor || 0}</p>
                   <p className="text-xs text-muted-foreground">Goals Scored</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold text-rose-500">{team.stats.goalsAgainst}</p>
+                  <p className="text-2xl font-bold text-rose-500">{stats.goalsAgainst || 0}</p>
                   <p className="text-xs text-muted-foreground">Goals Conceded</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold">±{team.stats.goalDifference}</p>
+                  <p className="text-2xl font-bold">±{stats.goalDifference || 0}</p>
                   <p className="text-xs text-muted-foreground">Goal Difference</p>
                 </div>
               </div>
@@ -220,39 +228,43 @@ export default async function TeamPage({ params }: Props) {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex gap-2 mb-2">
-                      {formTrend.map((result, index) => (
-                        <span
-                          key={index}
-                          className={cn(
-                            "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold",
-                            result === 'W' && "bg-emerald-500 text-white",
-                            result === 'D' && "bg-amber-500 text-white",
-                            result === 'L' && "bg-rose-500 text-white"
-                          )}
-                        >
-                          {result}
-                        </span>
-                      ))}
+                      {formTrend.length > 0 ? (
+                        formTrend.map((result, index) => (
+                          <span
+                            key={index}
+                            className={cn(
+                              "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold",
+                              result === 'W' && "bg-emerald-500 text-white",
+                              result === 'D' && "bg-amber-500 text-white",
+                              result === 'L' && "bg-rose-500 text-white"
+                            )}
+                          >
+                            {result}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No recent matches</span>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {formPoints} points from last 5 matches
+                      {formPoints} points from last {formTrend.length || 0} matches
                     </p>
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Win Rate</span>
                       <span className="font-medium">
-                        {((formTrend.filter(r => r === 'W').length / 5) * 100).toFixed(0)}%
+                        {formTrend.length > 0 ? ((formTrend.filter(r => r === 'W').length / formTrend.length) * 100).toFixed(0) : 0}%
                       </span>
                     </div>
                     <Progress 
-                      value={(formTrend.filter(r => r === 'W').length / 5) * 100} 
+                      value={formTrend.length > 0 ? (formTrend.filter(r => r === 'W').length / formTrend.length) * 100 : 0} 
                       className="h-2" 
                     />
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Avg Goals/Game</span>
                       <span className="font-medium">
-                        {(team.stats.goalsFor / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)}
+                        {(stats.goalsFor / totalGames).toFixed(1)}
                       </span>
                     </div>
                   </div>
@@ -333,11 +345,11 @@ export default async function TeamPage({ params }: Props) {
                         <span className="text-sm font-bold text-muted-foreground">#{index + 1}</span>
                         <div>
                           <p className="font-medium text-sm">{scorer.name}</p>
-                          <p className="text-xs text-muted-foreground">{scorer.assists} assists</p>
+                          <p className="text-xs text-muted-foreground">{scorer.assists || 0} assists</p>
                         </div>
                       </div>
                       <Badge variant="secondary" className="text-lg font-bold">
-                        {scorer.goals} goals
+                        {scorer.goals || 0} goals
                       </Badge>
                     </div>
                   ))}
@@ -386,41 +398,45 @@ export default async function TeamPage({ params }: Props) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {recentResults.map((result, index) => (
-                  <div key={index} className="flex items-center justify-between rounded-lg border border-border p-4">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{result.opponentFlag}</span>
-                      <div>
-                        <p className="font-medium">{result.opponent}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {result.isHome ? 'Home' : 'Away'} • {result.date}
-                        </p>
+              {recentResults.length > 0 ? (
+                <div className="space-y-3">
+                  {recentResults.map((result, index) => (
+                    <div key={index} className="flex items-center justify-between rounded-lg border border-border p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{result.opponentFlag}</span>
+                        <div>
+                          <p className="font-medium">{result.opponent}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {result.isHome ? 'Home' : 'Away'} • {result.date}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={cn(
+                          "font-bold text-lg",
+                          result.result === 'W' && "text-emerald-500",
+                          result.result === 'L' && "text-rose-500",
+                          result.result === 'D' && "text-amber-500"
+                        )}>
+                          {result.scored} - {result.conceded}
+                        </span>
+                        <Badge 
+                          variant="outline"
+                          className={cn(
+                            result.result === 'W' && "border-emerald-500 text-emerald-500",
+                            result.result === 'L' && "border-rose-500 text-rose-500",
+                            result.result === 'D' && "border-amber-500 text-amber-500"
+                          )}
+                        >
+                          {result.result}
+                        </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className={cn(
-                        "font-bold text-lg",
-                        result.result === 'W' && "text-emerald-500",
-                        result.result === 'L' && "text-rose-500",
-                        result.result === 'D' && "text-amber-500"
-                      )}>
-                        {result.scored} - {result.conceded}
-                      </span>
-                      <Badge 
-                        variant="outline"
-                        className={cn(
-                          result.result === 'W' && "border-emerald-500 text-emerald-500",
-                          result.result === 'L' && "border-rose-500 text-rose-500",
-                          result.result === 'D' && "border-amber-500 text-amber-500"
-                        )}
-                      >
-                        {result.result}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">No recent matches available</p>
+              )}
             </CardContent>
           </Card>
 
@@ -446,18 +462,18 @@ export default async function TeamPage({ params }: Props) {
                     <Link key={match.id} href={`/predictions/${match.slug}`}>
                       <div className="flex items-center justify-between rounded-lg border border-border p-4 transition-all hover:border-primary/50 hover:bg-secondary/50 hover:shadow-sm">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{opponent.flag}</span>
+                          <span className="text-2xl">{opponent.flag || '🏳️'}</span>
                           <div>
                             <p className="font-medium">
                               {isHome ? 'vs' : '@'} {opponent.name}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {isHome ? 'Home' : 'Away'} • {match.date}
+                              {isHome ? 'Home' : 'Away'} • {match.date || 'TBD'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Badge variant="outline">{match.stage}</Badge>
+                          <Badge variant="outline">{match.stage || 'League'}</Badge>
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         </div>
                       </div>
@@ -481,47 +497,47 @@ export default async function TeamPage({ params }: Props) {
             </CardHeader>
             <CardContent>
               <div className="text-center mb-6">
-                <p className="text-5xl font-bold text-primary">{team.overallRating}%</p>
+                <p className="text-5xl font-bold text-primary">{team.overallRating || 75}%</p>
                 <p className="text-sm text-muted-foreground mt-1">Team Performance Index</p>
               </div>
               
-              <Progress value={team.overallRating} className="h-3 mb-6" />
+              <Progress value={team.overallRating || 75} className="h-3 mb-6" />
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">AI Rating</span>
-                  <span className="font-medium">{team.aiRating}/100</span>
+                  <span className="font-medium">{team.aiRating || 75}/100</span>
                 </div>
 
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">League Position</span>
-                  <span className="font-medium">#{team.ranking}</span>
+                  <span className="font-medium">#{team.ranking || 'N/A'}</span>
                 </div>
 
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">Goals Scored (Avg)</span>
-                  <span className="font-medium">{team.stats.goalsFor} ({(team.stats.goalsFor / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)})</span>
+                  <span className="font-medium">{stats.goalsFor || 0} ({(stats.goalsFor / totalGames).toFixed(1)})</span>
                 </div>
 
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">Goals Conceded (Avg)</span>
-                  <span className="font-medium">{team.stats.goalsAgainst} ({(team.stats.goalsAgainst / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)})</span>
+                  <span className="font-medium">{stats.goalsAgainst || 0} ({(stats.goalsAgainst / totalGames).toFixed(1)})</span>
                 </div>
 
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">Goal Difference</span>
                   <span className={cn(
                     "font-medium",
-                    team.stats.goalDifference > 0 && "text-emerald-500",
-                    team.stats.goalDifference < 0 && "text-rose-500"
+                    (stats.goalDifference || 0) > 0 && "text-emerald-500",
+                    (stats.goalDifference || 0) < 0 && "text-rose-500"
                   )}>
-                    {team.stats.goalDifference > 0 ? '+' : ''}{team.stats.goalDifference}
+                    {(stats.goalDifference || 0) > 0 ? '+' : ''}{stats.goalDifference || 0}
                   </span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Recent Form</span>
-                  <span className="font-medium">{team.form.join(" ")}</span>
+                  <span className="font-medium">{(team.form || []).join(" ") || 'N/A'}</span>
                 </div>
               </div>
 

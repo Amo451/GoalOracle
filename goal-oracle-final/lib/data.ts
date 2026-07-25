@@ -1,4 +1,4 @@
-// Sample data for GoalOracle AI - FIFA World Cup Predictions
+// Sample data for GoalOracle AI - European Football Leagues
 
 export interface Team {
   id: string
@@ -6,13 +6,19 @@ export interface Team {
   code: string
   flag: string
   group: string
+  league: string // Added: European league name
   ranking: number
+  powerRating: number // Added: Team power rating
+  overallRating: number // Added: Overall team rating
+  aiRating: number // Added: AI rating
   stats: {
     wins: number
     draws: number
     losses: number
     goalsFor: number
     goalsAgainst: number
+    points: number // Added: League points
+    goalDifference: number // Added: Goal difference
   }
   form: ('W' | 'D' | 'L')[]
   strengths: string[]
@@ -24,6 +30,25 @@ export interface Team {
   }[]
   tournamentProbability: number
   description: string
+  // New fields for team analysis
+  formation: string
+  playingStyle: string
+  attackFocus: string
+  defensiveStyle: string
+  injuries: {
+    player: string
+    status: string
+    returnDate?: string
+  }[]
+  topScorers: {
+    name: string
+    goals: number
+    assists: number
+  }[]
+  h2hWins: number
+  h2hDraws: number
+  h2hLosses: number
+  h2hGoalsScored: number
 }
 
 export interface Match {
@@ -35,6 +60,9 @@ export interface Match {
   time: string
   venue: string
   stage: string
+  result?: 'W' | 'D' | 'L' // Added: Match result
+  homeScore?: number // Added: Home team score
+  awayScore?: number // Added: Away team score
   prediction: {
     winner: 'home' | 'away' | 'draw'
     confidence: number
@@ -103,582 +131,589 @@ export interface Bookmaker {
   featured?: boolean
 }
 
-// Teams Data
+// Teams Data - European Leagues
 export const teams: Team[] = [
   {
-    id: 'france',
-    name: 'France',
-    code: 'FRA',
-    flag: '🇫🇷',
-    group: 'D',
-    ranking: 2,
-    stats: { wins: 8, draws: 1, losses: 1, goalsFor: 24, goalsAgainst: 8 },
-    form: ['W', 'W', 'D', 'W', 'W'],
-    strengths: ['World-class attacking depth', 'Strong defensive organization', 'Tournament experience'],
-    weaknesses: ['Occasional defensive lapses', 'Squad harmony concerns'],
-    starPlayers: [
-      { name: 'Kylian Mbappé', position: 'Forward', rating: 94 },
-      { name: 'Antoine Griezmann', position: 'Forward', rating: 88 },
-      { name: 'Aurélien Tchouaméni', position: 'Midfielder', rating: 86 }
-    ],
-    tournamentProbability: 18.5,
-    description: 'The defending champions enter as one of the favorites with a perfect blend of experience and youth.'
-  },
-  {
-    id: 'brazil',
-    name: 'Brazil',
-    code: 'BRA',
-    flag: '🇧🇷',
-    group: 'G',
-    ranking: 3,
-    stats: { wins: 9, draws: 0, losses: 1, goalsFor: 28, goalsAgainst: 5 },
-    form: ['W', 'W', 'W', 'L', 'W'],
-    strengths: ['Elite attacking talent', 'Technical superiority', 'Strong squad depth'],
-    weaknesses: ['Defensive vulnerabilities against pace', 'Pressure in knockouts'],
-    starPlayers: [
-      { name: 'Vinícius Jr.', position: 'Forward', rating: 93 },
-      { name: 'Rodrygo', position: 'Forward', rating: 88 },
-      { name: 'Casemiro', position: 'Midfielder', rating: 87 }
-    ],
-    tournamentProbability: 16.2,
-    description: 'Seeking their sixth World Cup title, Brazil brings flair and firepower.'
-  },
-  {
-    id: 'argentina',
-    name: 'Argentina',
-    code: 'ARG',
-    flag: '🇦🇷',
-    group: 'C',
-    ranking: 1,
-    stats: { wins: 10, draws: 0, losses: 0, goalsFor: 32, goalsAgainst: 4 },
-    form: ['W', 'W', 'W', 'W', 'W'],
-    strengths: ['Messi magic', 'Team unity', 'Winning mentality'],
-    weaknesses: ['Aging key players', 'Reliance on Messi'],
-    starPlayers: [
-      { name: 'Lionel Messi', position: 'Forward', rating: 93 },
-      { name: 'Julián Álvarez', position: 'Forward', rating: 86 },
-      { name: 'Enzo Fernández', position: 'Midfielder', rating: 87 }
-    ],
-    tournamentProbability: 20.1,
-    description: 'The reigning champions and Copa America winners are on an incredible run.'
-  },
-  {
-    id: 'england',
-    name: 'England',
-    code: 'ENG',
+    id: 'man-city',
+    name: 'Manchester City',
+    code: 'MCI',
     flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-    group: 'B',
-    ranking: 4,
-    stats: { wins: 7, draws: 2, losses: 1, goalsFor: 22, goalsAgainst: 6 },
-    form: ['W', 'D', 'W', 'W', 'D'],
-    strengths: ['Premier League quality', 'Strong midfield', 'Set-piece threat'],
-    weaknesses: ['Knockout pressure', 'Left-back concerns'],
+    group: 'Premier League',
+    league: 'Premier League',
+    ranking: 1,
+    powerRating: 92,
+    overallRating: 94,
+    aiRating: 93,
+    stats: { 
+      wins: 28, 
+      draws: 5, 
+      losses: 3, 
+      goalsFor: 89, 
+      goalsAgainst: 28,
+      points: 89,
+      goalDifference: 61
+    },
+    form: ['W', 'W', 'D', 'W', 'W'],
+    strengths: ['Possession dominance', 'Squad depth', 'Pep Guardiola tactics', 'Attacking creativity'],
+    weaknesses: ['Over-reliance on Haaland', 'Defensive transitions'],
+    starPlayers: [
+      { name: 'Erling Haaland', position: 'Striker', rating: 94 },
+      { name: 'Kevin De Bruyne', position: 'Midfielder', rating: 92 },
+      { name: 'Phil Foden', position: 'Forward', rating: 89 }
+    ],
+    tournamentProbability: 22.5,
+    description: 'Reigning Premier League champions with a star-studded squad and world-class manager.',
+    formation: '4-3-3',
+    playingStyle: 'Possession-based attacking',
+    attackFocus: 'Width and overlapping fullbacks',
+    defensiveStyle: 'High press with compact shape',
+    injuries: [],
+    topScorers: [
+      { name: 'Erling Haaland', goals: 27, assists: 5 },
+      { name: 'Phil Foden', goals: 11, assists: 7 },
+      { name: 'Julian Alvarez', goals: 9, assists: 6 }
+    ],
+    h2hWins: 12,
+    h2hDraws: 5,
+    h2hLosses: 8,
+    h2hGoalsScored: 42
+  },
+  {
+    id: 'real-madrid',
+    name: 'Real Madrid',
+    code: 'RMA',
+    flag: '🇪🇸',
+    group: 'La Liga',
+    league: 'La Liga',
+    ranking: 2,
+    powerRating: 90,
+    overallRating: 92,
+    aiRating: 91,
+    stats: { 
+      wins: 26, 
+      draws: 6, 
+      losses: 4, 
+      goalsFor: 78, 
+      goalsAgainst: 30,
+      points: 84,
+      goalDifference: 48
+    },
+    form: ['W', 'W', 'L', 'W', 'D'],
+    strengths: ['Champions League pedigree', 'Counter-attacking', 'Midfield creativity'],
+    weaknesses: ['Defensive injuries', 'Ageing squad'],
     starPlayers: [
       { name: 'Jude Bellingham', position: 'Midfielder', rating: 91 },
-      { name: 'Harry Kane', position: 'Forward', rating: 90 },
-      { name: 'Phil Foden', position: 'Midfielder', rating: 89 }
+      { name: 'Vinicius Jr.', position: 'Forward', rating: 93 },
+      { name: 'Rodrygo', position: 'Forward', rating: 88 }
     ],
-    tournamentProbability: 12.8,
-    description: 'England continues their quest to end decades of hurt with a golden generation.'
+    tournamentProbability: 18.7,
+    description: 'European giants with a record 14 Champions League titles and a squad full of world-class talent.',
+    formation: '4-3-3',
+    playingStyle: 'Direct counter-attacking',
+    attackFocus: 'Speed on the wings',
+    defensiveStyle: 'Low block with quick transitions',
+    injuries: [
+      { player: 'David Alaba', status: 'Out (ACL)', returnDate: '2026-08-15' },
+      { player: 'Thibaut Courtois', status: 'Doubtful', returnDate: '2026-07-20' }
+    ],
+    topScorers: [
+      { name: 'Vinicius Jr.', goals: 18, assists: 8 },
+      { name: 'Jude Bellingham', goals: 15, assists: 6 },
+      { name: 'Rodrygo', goals: 12, assists: 5 }
+    ],
+    h2hWins: 15,
+    h2hDraws: 4,
+    h2hLosses: 9,
+    h2hGoalsScored: 48
   },
   {
-    id: 'germany',
-    name: 'Germany',
-    code: 'GER',
+    id: 'bayern',
+    name: 'Bayern Munich',
+    code: 'FCB',
     flag: '🇩🇪',
-    group: 'A',
-    ranking: 12,
-    stats: { wins: 6, draws: 2, losses: 2, goalsFor: 18, goalsAgainst: 10 },
-    form: ['W', 'L', 'W', 'D', 'W'],
-    strengths: ['Tournament hosts advantage', 'Young emerging talent', 'Tactical flexibility'],
-    weaknesses: ['Recent poor tournament form', 'Defensive issues'],
+    group: 'Bundesliga',
+    league: 'Bundesliga',
+    ranking: 3,
+    powerRating: 88,
+    overallRating: 90,
+    aiRating: 89,
+    stats: { 
+      wins: 25, 
+      draws: 7, 
+      losses: 2, 
+      goalsFor: 82, 
+      goalsAgainst: 25,
+      points: 82,
+      goalDifference: 57
+    },
+    form: ['W', 'W', 'W', 'D', 'W'],
+    strengths: ['Bundesliga dominance', 'Attacking firepower', 'Squad depth'],
+    weaknesses: ['European consistency', 'Key player injuries'],
     starPlayers: [
-      { name: 'Florian Wirtz', position: 'Midfielder', rating: 88 },
+      { name: 'Harry Kane', position: 'Striker', rating: 90 },
       { name: 'Jamal Musiala', position: 'Midfielder', rating: 89 },
-      { name: 'Kai Havertz', position: 'Forward', rating: 85 }
+      { name: 'Leroy Sané', position: 'Winger', rating: 87 }
     ],
-    tournamentProbability: 8.5,
-    description: 'Die Mannschaft look to reignite their World Cup passion on home soil.'
+    tournamentProbability: 16.3,
+    description: 'German powerhouse with a rich history of domestic and European success.',
+    formation: '4-2-3-1',
+    playingStyle: 'High-pressing attacking',
+    attackFocus: 'Central combination play',
+    defensiveStyle: 'Aggressive high line',
+    injuries: [
+      { player: 'Matthijs de Ligt', status: 'Doubtful', returnDate: '2026-07-28' }
+    ],
+    topScorers: [
+      { name: 'Harry Kane', goals: 28, assists: 7 },
+      { name: 'Leroy Sané', goals: 13, assists: 9 },
+      { name: 'Jamal Musiala', goals: 10, assists: 12 }
+    ],
+    h2hWins: 18,
+    h2hDraws: 6,
+    h2hLosses: 5,
+    h2hGoalsScored: 56
+  },
+  {
+    id: 'psg',
+    name: 'Paris Saint-Germain',
+    code: 'PSG',
+    flag: '🇫🇷',
+    group: 'Ligue 1',
+    league: 'Ligue 1',
+    ranking: 4,
+    powerRating: 87,
+    overallRating: 88,
+    aiRating: 87,
+    stats: { 
+      wins: 22, 
+      draws: 8, 
+      losses: 4, 
+      goalsFor: 75, 
+      goalsAgainst: 32,
+      points: 74,
+      goalDifference: 43
+    },
+    form: ['W', 'D', 'W', 'W', 'L'],
+    strengths: ['Individual brilliance', 'Attacking talent', 'French dominance'],
+    weaknesses: ['Team cohesion', 'Defensive structure'],
+    starPlayers: [
+      { name: 'Kylian Mbappé', position: 'Forward', rating: 94 },
+      { name: 'Ousmane Dembélé', position: 'Winger', rating: 87 },
+      { name: 'Achraf Hakimi', position: 'Fullback', rating: 86 }
+    ],
+    tournamentProbability: 14.2,
+    description: 'French giants with superstar talent and domestic dominance.',
+    formation: '4-3-3',
+    playingStyle: 'Counter-attacking with pace',
+    attackFocus: 'Direct runs in behind',
+    defensiveStyle: 'Medium block with pressing triggers',
+    injuries: [
+      { player: 'Presnel Kimpembe', status: 'Out', returnDate: '2026-09-01' }
+    ],
+    topScorers: [
+      { name: 'Kylian Mbappé', goals: 24, assists: 8 },
+      { name: 'Gonçalo Ramos', goals: 14, assists: 4 },
+      { name: 'Ousmane Dembélé', goals: 8, assists: 12 }
+    ],
+    h2hWins: 10,
+    h2hDraws: 7,
+    h2hLosses: 8,
+    h2hGoalsScored: 38
+  },
+  {
+    id: 'barcelona',
+    name: 'Barcelona',
+    code: 'BAR',
+    flag: '🇪🇸',
+    group: 'La Liga',
+    league: 'La Liga',
+    ranking: 5,
+    powerRating: 86,
+    overallRating: 87,
+    aiRating: 86,
+    stats: { 
+      wins: 21, 
+      draws: 9, 
+      losses: 4, 
+      goalsFor: 68, 
+      goalsAgainst: 29,
+      points: 72,
+      goalDifference: 39
+    },
+    form: ['W', 'D', 'W', 'L', 'W'],
+    strengths: ['Youth development', 'Possession football', 'Technical quality'],
+    weaknesses: ['Financial constraints', 'European struggles'],
+    starPlayers: [
+      { name: 'Lamine Yamal', position: 'Forward', rating: 88 },
+      { name: 'Pedri', position: 'Midfielder', rating: 87 },
+      { name: 'Gavi', position: 'Midfielder', rating: 87 }
+    ],
+    tournamentProbability: 12.8,
+    description: 'Spanish giants known for their beautiful football and world-class youth academy.',
+    formation: '4-3-3',
+    playingStyle: 'Tiki-taka possession',
+    attackFocus: 'Through the middle',
+    defensiveStyle: 'High press with positional discipline',
+    injuries: [
+      { player: 'Raphinha', status: 'Fit' },
+      { player: 'João Cancelo', status: 'Doubtful', returnDate: '2026-07-15' }
+    ],
+    topScorers: [
+      { name: 'Lamine Yamal', goals: 16, assists: 10 },
+      { name: 'Ferran Torres', goals: 12, assists: 5 },
+      { name: 'Robert Lewandowski', goals: 11, assists: 6 }
+    ],
+    h2hWins: 14,
+    h2hDraws: 8,
+    h2hLosses: 7,
+    h2hGoalsScored: 45
+  },
+  {
+    id: 'liverpool',
+    name: 'Liverpool',
+    code: 'LIV',
+    flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    group: 'Premier League',
+    league: 'Premier League',
+    ranking: 6,
+    powerRating: 85,
+    overallRating: 86,
+    aiRating: 85,
+    stats: { 
+      wins: 20, 
+      draws: 8, 
+      losses: 6, 
+      goalsFor: 72, 
+      goalsAgainst: 35,
+      points: 68,
+      goalDifference: 37
+    },
+    form: ['L', 'W', 'W', 'D', 'W'],
+    strengths: ['High-intensity pressing', 'Anfield atmosphere', 'Klopp\'s system'],
+    weaknesses: ['Squad transitions', 'Injury prone squad'],
+    starPlayers: [
+      { name: 'Mohamed Salah', position: 'Forward', rating: 91 },
+      { name: 'Darwin Núñez', position: 'Striker', rating: 86 },
+      { name: 'Alexis Mac Allister', position: 'Midfielder', rating: 86 }
+    ],
+    tournamentProbability: 11.5,
+    description: 'Historic English club with a passionate fanbase and attacking football tradition.',
+    formation: '4-3-3',
+    playingStyle: 'High-pressing heavy metal',
+    attackFocus: 'Width and crossing',
+    defensiveStyle: 'Aggressive gegenpress',
+    injuries: [
+      { player: 'Alisson Becker', status: 'Fit' },
+      { player: 'Trent Alexander-Arnold', status: 'Doubtful', returnDate: '2026-07-22' }
+    ],
+    topScorers: [
+      { name: 'Mohamed Salah', goals: 21, assists: 9 },
+      { name: 'Darwin Núñez', goals: 15, assists: 6 },
+      { name: 'Luis Díaz', goals: 9, assists: 7 }
+    ],
+    h2hWins: 11,
+    h2hDraws: 6,
+    h2hLosses: 10,
+    h2hGoalsScored: 40
+  },
+  {
+    id: 'inter',
+    name: 'Inter Milan',
+    code: 'INT',
+    flag: '🇮🇹',
+    group: 'Serie A',
+    league: 'Serie A',
+    ranking: 7,
+    powerRating: 84,
+    overallRating: 85,
+    aiRating: 84,
+    stats: { 
+      wins: 22, 
+      draws: 5, 
+      losses: 5, 
+      goalsFor: 65, 
+      goalsAgainst: 28,
+      points: 71,
+      goalDifference: 37
+    },
+    form: ['W', 'W', 'L', 'D', 'W'],
+    strengths: ['Defensive organization', 'Counter-attacking', 'Italian tactical discipline'],
+    weaknesses: ['Squad depth', 'European experience'],
+    starPlayers: [
+      { name: 'Lautaro Martínez', position: 'Striker', rating: 88 },
+      { name: 'Hakan Çalhanoğlu', position: 'Midfielder', rating: 86 },
+      { name: 'Nicolò Barella', position: 'Midfielder', rating: 87 }
+    ],
+    tournamentProbability: 10.3,
+    description: 'Italian giants with a rich history and tactical intelligence.',
+    formation: '3-5-2',
+    playingStyle: 'Defensive solidity with quick breaks',
+    attackFocus: 'Two-striker partnership',
+    defensiveStyle: 'Compact low block',
+    injuries: [
+      { player: 'Stefan de Vrij', status: 'Doubtful', returnDate: '2026-07-18' }
+    ],
+    topScorers: [
+      { name: 'Lautaro Martínez', goals: 19, assists: 5 },
+      { name: 'Marcus Thuram', goals: 12, assists: 8 },
+      { name: 'Hakan Çalhanoğlu', goals: 8, assists: 10 }
+    ],
+    h2hWins: 8,
+    h2hDraws: 4,
+    h2hLosses: 7,
+    h2hGoalsScored: 28
+  },
+  {
+    id: 'milan',
+    name: 'AC Milan',
+    code: 'MIL',
+    flag: '🇮🇹',
+    group: 'Serie A',
+    league: 'Serie A',
+    ranking: 8,
+    powerRating: 82,
+    overallRating: 83,
+    aiRating: 82,
+    stats: { 
+      wins: 19, 
+      draws: 8, 
+      losses: 6, 
+      goalsFor: 58, 
+      goalsAgainst: 32,
+      points: 65,
+      goalDifference: 26
+    },
+    form: ['D', 'W', 'W', 'L', 'W'],
+    strengths: ['Champions League pedigree', 'Youth energy', 'Attacking flair'],
+    weaknesses: ['Consistency', 'Defensive injuries'],
+    starPlayers: [
+      { name: 'Rafael Leão', position: 'Forward', rating: 87 },
+      { name: 'Theo Hernández', position: 'Fullback', rating: 86 },
+      { name: 'Mike Maignan', position: 'Goalkeeper', rating: 88 }
+    ],
+    tournamentProbability: 9.8,
+    description: 'Seven-time Champions League winners with a rich Italian football heritage.',
+    formation: '4-2-3-1',
+    playingStyle: 'Counter-attacking with flair',
+    attackFocus: 'Left-wing overloads',
+    defensiveStyle: 'Medium block with quick transitions',
+    injuries: [],
+    topScorers: [
+      { name: 'Olivier Giroud', goals: 14, assists: 7 },
+      { name: 'Rafael Leão', goals: 11, assists: 9 },
+      { name: 'Christian Pulisic', goals: 8, assists: 6 }
+    ],
+    h2hWins: 7,
+    h2hDraws: 5,
+    h2hLosses: 8,
+    h2hGoalsScored: 26
   }
 ]
 
-// Matches Data
+// Matches Data - European Leagues
 export const matches: Match[] = [
   {
     id: '1',
-    slug: 'france-vs-brazil',
-    homeTeam: 'france',
-    awayTeam: 'brazil',
-    date: '2026-06-20',
+    slug: 'man-city-vs-liverpool',
+    homeTeam: 'man-city',
+    awayTeam: 'liverpool',
+    date: '2026-07-20',
     time: '20:00',
-    venue: 'MetLife Stadium, New Jersey',
-    stage: 'Quarter-Final',
+    venue: 'Etihad Stadium, Manchester',
+    stage: 'Premier League',
+    result: 'W',
+    homeScore: 2,
+    awayScore: 1,
     prediction: {
       winner: 'home',
       confidence: 62,
       predictedScore: { home: 2, away: 1 },
-      analysis: 'France\'s defensive solidity and counter-attacking prowess give them the edge against Brazil\'s high line. Mbappé\'s pace will be crucial against an aging Brazilian defense.',
+      analysis: 'Manchester City\'s home advantage and superior squad depth should edge this crucial Premier League clash.',
       keyFactors: [
-        'France unbeaten in last 8 matches',
-        'Brazil struggling against European opposition',
-        'Mbappé in career-best form',
-        'French midfield control expected'
+        'Man City unbeaten in last 15 home games',
+        'Liverpool\'s away form inconsistent',
+        'Haaland in scoring form',
+        'Salah vs Walker battle key'
       ]
     },
     odds: [
-      { bookmaker: 'Bet365', home: 2.40, draw: 3.20, away: 2.90 },
-      { bookmaker: 'William Hill', home: 2.35, draw: 3.25, away: 2.95 },
-      { bookmaker: 'Betfair', home: 2.42, draw: 3.18, away: 2.88 }
+      { bookmaker: 'Bet365', home: 1.85, draw: 3.80, away: 4.00 },
+      { bookmaker: 'William Hill', home: 1.80, draw: 3.85, away: 4.10 },
+      { bookmaker: 'Betfair', home: 1.87, draw: 3.78, away: 3.98 }
     ],
     headToHead: {
       homeWins: 6,
       draws: 4,
       awayWins: 5,
       lastMatches: [
-        { date: '2023-03-26', score: '2-3', winner: 'Brazil' },
-        { date: '2022-12-18', score: '4-2', winner: 'France' },
-        { date: '2018-06-27', score: '2-0', winner: 'France' }
+        { date: '2026-03-10', score: '2-2', winner: 'Draw' },
+        { date: '2025-12-15', score: '1-0', winner: 'Man City' },
+        { date: '2025-10-05', score: '1-1', winner: 'Draw' }
       ]
     },
     injuries: [
-      { team: 'France', player: 'Lucas Hernández', status: 'Doubtful' },
-      { team: 'Brazil', player: 'Neymar', status: 'Out' }
+      { team: 'Man City', player: 'Erling Haaland', status: 'Fit' },
+      { team: 'Liverpool', player: 'Alisson Becker', status: 'Fit' }
     ],
     suggestedBets: [
-      { type: 'Match Result', selection: 'France Win', odds: 2.40, confidence: 62 },
+      { type: 'Match Result', selection: 'Man City Win', odds: 1.85, confidence: 62 },
       { type: 'Both Teams to Score', selection: 'Yes', odds: 1.70, confidence: 78 },
-      { type: 'Total Goals', selection: 'Over 2.5', odds: 1.85, confidence: 71 }
+      { type: 'Total Goals', selection: 'Over 2.5', odds: 1.75, confidence: 71 }
     ],
     isFeatured: true,
     isTrending: true
   },
   {
     id: '2',
-    slug: 'argentina-vs-england',
-    homeTeam: 'argentina',
-    awayTeam: 'england',
-    date: '2026-06-21',
-    time: '18:00',
-    venue: 'AT&T Stadium, Dallas',
-    stage: 'Quarter-Final',
+    slug: 'real-madrid-vs-barcelona',
+    homeTeam: 'real-madrid',
+    awayTeam: 'barcelona',
+    date: '2026-07-21',
+    time: '21:00',
+    venue: 'Santiago Bernabéu, Madrid',
+    stage: 'La Liga',
+    result: 'D',
+    homeScore: 1,
+    awayScore: 1,
     prediction: {
-      winner: 'home',
-      confidence: 58,
-      predictedScore: { home: 2, away: 1 },
-      analysis: 'A historic rivalry renewed. Argentina\'s winning mentality and Messi\'s tournament form give them a slight edge, but England\'s midfield quality makes this incredibly tight.',
+      winner: 'draw',
+      confidence: 55,
+      predictedScore: { home: 1, away: 1 },
+      analysis: 'The biggest rivalry in club football. Both teams are evenly matched with world-class talent.',
       keyFactors: [
-        'Argentina\'s 15-match unbeaten run',
-        'England\'s knockout stage struggles',
-        'Messi vs Bellingham battle',
-        'High-pressure environment'
+        'Historic El Clásico rivalry',
+        'Bellingham vs Pedri midfield battle',
+        'Vinicius vs Cancelo matchup',
+        'Both teams in top form'
       ]
     },
     odds: [
-      { bookmaker: 'Bet365', home: 2.20, draw: 3.40, away: 3.10 },
-      { bookmaker: 'William Hill', home: 2.15, draw: 3.45, away: 3.15 },
-      { bookmaker: 'Betfair', home: 2.22, draw: 3.38, away: 3.08 }
+      { bookmaker: 'Bet365', home: 2.30, draw: 3.40, away: 3.00 },
+      { bookmaker: 'William Hill', home: 2.25, draw: 3.45, away: 3.05 },
+      { bookmaker: 'Betfair', home: 2.32, draw: 3.38, away: 2.98 }
     ],
     headToHead: {
-      homeWins: 9,
-      draws: 5,
-      awayWins: 6,
+      homeWins: 18,
+      draws: 8,
+      awayWins: 16,
       lastMatches: [
-        { date: '2022-11-27', score: '0-0', winner: 'Draw' },
-        { date: '2005-11-12', score: '3-2', winner: 'Argentina' },
-        { date: '2002-06-07', score: '1-0', winner: 'England' }
+        { date: '2026-04-15', score: '2-1', winner: 'Real Madrid' },
+        { date: '2026-01-12', score: '3-2', winner: 'Barcelona' },
+        { date: '2025-10-20', score: '0-0', winner: 'Draw' }
       ]
     },
     injuries: [
-      { team: 'Argentina', player: 'Cristian Romero', status: 'Fit' },
-      { team: 'England', player: 'Luke Shaw', status: 'Doubtful' }
+      { team: 'Real Madrid', player: 'David Alaba', status: 'Out' },
+      { team: 'Barcelona', player: 'Frenkie de Jong', status: 'Doubtful' }
     ],
     suggestedBets: [
-      { type: 'Match Result', selection: 'Argentina Win', odds: 2.20, confidence: 58 },
-      { type: 'Correct Score', selection: '2-1', odds: 8.50, confidence: 35 },
-      { type: 'First Goalscorer', selection: 'Messi', odds: 5.00, confidence: 42 }
+      { type: 'Match Result', selection: 'Draw', odds: 3.40, confidence: 55 },
+      { type: 'Both Teams to Score', selection: 'Yes', odds: 1.65, confidence: 82 },
+      { type: 'Total Goals', selection: 'Under 2.5', odds: 1.80, confidence: 58 }
     ],
     isFeatured: true,
     isTrending: true
   },
   {
     id: '3',
-    slug: 'germany-vs-spain',
-    homeTeam: 'germany',
-    awayTeam: 'spain',
-    date: '2026-06-19',
-    time: '21:00',
-    venue: 'Azteca Stadium, Mexico City',
-    stage: 'Round of 16',
-    prediction: {
-      winner: 'away',
-      confidence: 55,
-      predictedScore: { home: 1, away: 2 },
-      analysis: 'Spain\'s midfield dominance through Pedri and Gavi should control this match. Germany\'s young talents are exciting but Spain\'s experience in big games tips the balance.',
-      keyFactors: [
-        'Spain\'s midfield superiority',
-        'Germany\'s home crowd advantage',
-        'Spanish tournament pedigree',
-        'Young German talents emerging'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.80, draw: 3.20, away: 2.50 },
-      { bookmaker: 'William Hill', home: 2.75, draw: 3.25, away: 2.55 },
-      { bookmaker: 'Betfair', home: 2.82, draw: 3.18, away: 2.48 }
-    ],
-    headToHead: {
-      homeWins: 8,
-      draws: 5,
-      awayWins: 9,
-      lastMatches: [
-        { date: '2022-11-27', score: '1-1', winner: 'Draw' },
-        { date: '2020-11-17', score: '6-0', winner: 'Spain' },
-        { date: '2020-09-03', score: '1-1', winner: 'Draw' }
-      ]
-    },
-    injuries: [
-      { team: 'Germany', player: 'Leroy Sané', status: 'Fit' },
-      { team: 'Spain', player: 'Gavi', status: 'Doubtful' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Spain Win', odds: 2.50, confidence: 55 },
-      { type: 'Total Goals', selection: 'Under 2.5', odds: 1.90, confidence: 52 },
-      { type: 'Draw No Bet', selection: 'Spain', odds: 1.72, confidence: 65 }
-    ],
-    isFeatured: false,
-    isTrending: true
-  },
-  {
-    id: '4',
-    slug: 'portugal-vs-netherlands',
-    homeTeam: 'portugal',
-    awayTeam: 'netherlands',
-    date: '2026-06-22',
-    time: '18:00',
-    venue: 'Rose Bowl, Los Angeles',
-    stage: 'Round of 16',
-    prediction: {
-      winner: 'home',
-      confidence: 54,
-      predictedScore: { home: 2, away: 1 },
-      analysis: 'Portugal\'s attacking firepower led by a rejuvenated squad should edge past the Netherlands. Dutch defensive frailties could be exposed by Portuguese pace.',
-      keyFactors: [
-        'Portuguese attacking depth',
-        'Dutch defensive vulnerabilities',
-        'Ronaldo\'s potential farewell tournament',
-        'Both teams prefer possession'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.30, draw: 3.30, away: 3.00 },
-      { bookmaker: 'William Hill', home: 2.25, draw: 3.35, away: 3.05 },
-      { bookmaker: 'Betfair', home: 2.32, draw: 3.28, away: 2.98 }
-    ],
-    headToHead: {
-      homeWins: 4,
-      draws: 3,
-      awayWins: 5,
-      lastMatches: [
-        { date: '2023-03-23', score: '0-3', winner: 'Netherlands' },
-        { date: '2022-06-09', score: '1-0', winner: 'Portugal' },
-        { date: '2019-06-09', score: '1-0', winner: 'Portugal' }
-      ]
-    },
-    injuries: [
-      { team: 'Portugal', player: 'Diogo Jota', status: 'Out' },
-      { team: 'Netherlands', player: 'Frenkie de Jong', status: 'Fit' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Portugal Win', odds: 2.30, confidence: 54 },
-      { type: 'Both Teams to Score', selection: 'Yes', odds: 1.80, confidence: 68 },
-      { type: 'Anytime Goalscorer', selection: 'Leão', odds: 3.20, confidence: 48 }
-    ],
-    isFeatured: false,
-    isTrending: false
-  },
-  {
-    id: '5',
-    slug: 'belgium-vs-italy',
-    homeTeam: 'belgium',
-    awayTeam: 'italy',
-    date: '2026-06-23',
-    time: '20:00',
-    venue: 'Mercedes-Benz Stadium, Atlanta',
-    stage: 'Round of 16',
-    prediction: {
-      winner: 'draw',
-      confidence: 48,
-      predictedScore: { home: 1, away: 1 },
-      analysis: 'Two aging golden generations meet in what could be a tactical chess match. Both teams have defensive solidity but lack the cutting edge of previous years.',
-      keyFactors: [
-        'Both teams in transition',
-        'Tactical masterclasses expected',
-        'Key players past their prime',
-        'Low-scoring affair likely'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.70, draw: 3.10, away: 2.70 },
-      { bookmaker: 'William Hill', home: 2.65, draw: 3.15, away: 2.75 },
-      { bookmaker: 'Betfair', home: 2.72, draw: 3.08, away: 2.68 }
-    ],
-    headToHead: {
-      homeWins: 3,
-      draws: 4,
-      awayWins: 5,
-      lastMatches: [
-        { date: '2021-07-02', score: '1-2', winner: 'Italy' },
-        { date: '2021-10-10', score: '2-1', winner: 'Belgium' },
-        { date: '2016-06-13', score: '0-2', winner: 'Italy' }
-      ]
-    },
-    injuries: [
-      { team: 'Belgium', player: 'Kevin De Bruyne', status: 'Fit' },
-      { team: 'Italy', player: 'Federico Chiesa', status: 'Doubtful' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Draw', odds: 3.10, confidence: 48 },
-      { type: 'Total Goals', selection: 'Under 2.5', odds: 1.75, confidence: 62 },
-      { type: 'Half-Time Result', selection: 'Draw', odds: 2.00, confidence: 55 }
-    ],
-    isFeatured: false,
-    isTrending: false
-  },
-  {
-    id: '6',
-    slug: 'usa-vs-mexico',
-    homeTeam: 'usa',
-    awayTeam: 'mexico',
-    date: '2026-06-18',
-    time: '19:00',
-    venue: 'SoFi Stadium, Los Angeles',
-    stage: 'Group Stage',
-    prediction: {
-      winner: 'home',
-      confidence: 56,
-      predictedScore: { home: 2, away: 1 },
-      analysis: 'CONCACAF rivalry at its peak on home soil. USA\'s young European-based players give them an edge, plus the massive home crowd advantage.',
-      keyFactors: [
-        'USA home advantage',
-        'Mexican struggles against USA recently',
-        'Young US talent peaking',
-        'Intense rivalry atmosphere'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.10, draw: 3.40, away: 3.50 },
-      { bookmaker: 'William Hill', home: 2.05, draw: 3.45, away: 3.55 },
-      { bookmaker: 'Betfair', home: 2.12, draw: 3.38, away: 3.48 }
-    ],
-    headToHead: {
-      homeWins: 10,
-      draws: 3,
-      awayWins: 8,
-      lastMatches: [
-        { date: '2024-03-24', score: '2-0', winner: 'USA' },
-        { date: '2023-11-15', score: '3-0', winner: 'USA' },
-        { date: '2022-11-21', score: '1-0', winner: 'Mexico' }
-      ]
-    },
-    injuries: [
-      { team: 'USA', player: 'Christian Pulisic', status: 'Fit' },
-      { team: 'Mexico', player: 'Raúl Jiménez', status: 'Doubtful' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'USA Win', odds: 2.10, confidence: 56 },
-      { type: 'Both Teams to Score', selection: 'Yes', odds: 1.85, confidence: 64 },
-      { type: 'Total Goals', selection: 'Over 2.5', odds: 1.95, confidence: 58 }
-    ],
-    isFeatured: true,
-    isTrending: true
-  },
-  {
-    id: '7',
-    slug: 'croatia-vs-morocco',
-    homeTeam: 'croatia',
-    awayTeam: 'morocco',
-    date: '2026-06-24',
-    time: '16:00',
-    venue: 'Hard Rock Stadium, Miami',
-    stage: 'Group Stage',
-    prediction: {
-      winner: 'draw',
-      confidence: 52,
-      predictedScore: { home: 1, away: 1 },
-      analysis: 'A rematch of the 2022 third-place playoff. Both teams are evenly matched with strong midfields and organized defenses. Expect another tight encounter.',
-      keyFactors: [
-        'Rematch of 2022 bronze medal match',
-        'Both teams defensively solid',
-        'Modrić vs Amrabat midfield battle',
-        'Neither team will take risks early'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.60, draw: 3.00, away: 2.90 },
-      { bookmaker: 'William Hill', home: 2.55, draw: 3.05, away: 2.95 },
-      { bookmaker: 'Betfair', home: 2.62, draw: 2.98, away: 2.88 }
-    ],
-    headToHead: {
-      homeWins: 2,
-      draws: 2,
-      awayWins: 1,
-      lastMatches: [
-        { date: '2022-12-17', score: '2-1', winner: 'Croatia' },
-        { date: '2022-11-23', score: '0-0', winner: 'Draw' }
-      ]
-    },
-    injuries: [
-      { team: 'Croatia', player: 'Ivan Perišić', status: 'Doubtful' },
-      { team: 'Morocco', player: 'Achraf Hakimi', status: 'Fit' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Draw', odds: 3.00, confidence: 52 },
-      { type: 'Total Goals', selection: 'Under 2.5', odds: 1.65, confidence: 68 },
-      { type: 'Double Chance', selection: 'Croatia or Draw', odds: 1.50, confidence: 72 }
-    ],
-    isFeatured: false,
-    isTrending: false
-  },
-  {
-    id: '8',
-    slug: 'japan-vs-south-korea',
-    homeTeam: 'japan',
-    awayTeam: 'south-korea',
-    date: '2026-06-25',
-    time: '14:00',
-    venue: 'BC Place, Vancouver',
-    stage: 'Group Stage',
-    prediction: {
-      winner: 'home',
-      confidence: 51,
-      predictedScore: { home: 2, away: 1 },
-      analysis: 'Asian giants clash in a historic rivalry. Japan\'s recent European success gives them a slight edge, but South Korea\'s fighting spirit cannot be underestimated.',
-      keyFactors: [
-        'Historic Asian rivalry',
-        'Japan\'s European contingent',
-        'South Korea\'s warrior mentality',
-        'Tactical battle expected'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.50, draw: 3.20, away: 2.80 },
-      { bookmaker: 'William Hill', home: 2.45, draw: 3.25, away: 2.85 },
-      { bookmaker: 'Betfair', home: 2.52, draw: 3.18, away: 2.78 }
-    ],
-    headToHead: {
-      homeWins: 15,
-      draws: 23,
-      awayWins: 41,
-      lastMatches: [
-        { date: '2024-01-30', score: '2-1', winner: 'Japan' },
-        { date: '2022-07-27', score: '3-0', winner: 'South Korea' },
-        { date: '2021-03-25', score: '3-0', winner: 'Japan' }
-      ]
-    },
-    injuries: [
-      { team: 'Japan', player: 'Takefusa Kubo', status: 'Fit' },
-      { team: 'South Korea', player: 'Son Heung-min', status: 'Fit' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Japan Win', odds: 2.50, confidence: 51 },
-      { type: 'Both Teams to Score', selection: 'Yes', odds: 1.75, confidence: 72 },
-      { type: 'Total Goals', selection: 'Over 2.5', odds: 2.00, confidence: 55 }
-    ],
-    isFeatured: false,
-    isTrending: true
-  },
-  {
-    id: '9',
-    slug: 'senegal-vs-cameroon',
-    homeTeam: 'senegal',
-    awayTeam: 'cameroon',
-    date: '2026-06-26',
-    time: '17:00',
-    venue: 'Estadio Akron, Guadalajara',
-    stage: 'Group Stage',
-    prediction: {
-      winner: 'home',
-      confidence: 54,
-      predictedScore: { home: 2, away: 0 },
-      analysis: 'African powerhouses meet with Senegal\'s AFCON pedigree giving them the advantage. Their defensive organization should nullify Cameroon\'s attacking threats.',
-      keyFactors: [
-        'Senegal\'s AFCON success',
-        'Strong Senegalese defense',
-        'Cameroon\'s inconsistency',
-        'Physical battle expected'
-      ]
-    },
-    odds: [
-      { bookmaker: 'Bet365', home: 2.20, draw: 3.20, away: 3.30 },
-      { bookmaker: 'William Hill', home: 2.15, draw: 3.25, away: 3.35 },
-      { bookmaker: 'Betfair', home: 2.22, draw: 3.18, away: 3.28 }
-    ],
-    headToHead: {
-      homeWins: 7,
-      draws: 5,
-      awayWins: 8,
-      lastMatches: [
-        { date: '2024-02-02', score: '0-0', winner: 'Draw' },
-        { date: '2022-02-02', score: '3-1', winner: 'Senegal' }
-      ]
-    },
-    injuries: [
-      { team: 'Senegal', player: 'Sadio Mané', status: 'Fit' },
-      { team: 'Cameroon', player: 'Eric Maxim Choupo-Moting', status: 'Fit' }
-    ],
-    suggestedBets: [
-      { type: 'Match Result', selection: 'Senegal Win', odds: 2.20, confidence: 54 },
-      { type: 'Clean Sheet', selection: 'Senegal', odds: 2.40, confidence: 48 },
-      { type: 'Total Goals', selection: 'Under 2.5', odds: 1.80, confidence: 58 }
-    ],
-    isFeatured: false,
-    isTrending: false
-  },
-  {
-    id: '10',
-    slug: 'canada-vs-australia',
-    homeTeam: 'canada',
-    awayTeam: 'australia',
-    date: '2026-06-27',
-    time: '15:00',
-    venue: 'BMO Field, Toronto',
-    stage: 'Group Stage',
+    slug: 'bayern-vs-psg',
+    homeTeam: 'bayern',
+    awayTeam: 'psg',
+    date: '2026-07-22',
+    time: '20:45',
+    venue: 'Allianz Arena, Munich',
+    stage: 'Champions League',
+    result: 'W',
+    homeScore: 3,
+    awayScore: 1,
     prediction: {
       winner: 'home',
       confidence: 58,
       predictedScore: { home: 2, away: 0 },
-      analysis: 'Canada\'s first World Cup on home soil adds extra motivation. Their Davies-led attack should prove too much for Australia\'s rebuilt squad.',
+      analysis: 'Bayern\'s home advantage and pressing game should overwhelm PSG\'s defensive vulnerabilities.',
       keyFactors: [
-        'Canada home advantage',
-        'Alphonso Davies threat',
-        'Australian rebuilding phase',
-        'Passionate Toronto crowd'
+        'Bayern unbeaten at home in UCL',
+        'PSG\'s defensive issues',
+        'Kane in clinical form',
+        'Mbappé\'s pace on the counter'
       ]
     },
     odds: [
-      { bookmaker: 'Bet365', home: 1.95, draw: 3.40, away: 3.80 },
-      { bookmaker: 'William Hill', home: 1.90, draw: 3.45, away: 3.85 },
-      { bookmaker: 'Betfair', home: 1.97, draw: 3.38, away: 3.78 }
+      { bookmaker: 'Bet365', home: 1.95, draw: 3.80, away: 3.60 },
+      { bookmaker: 'William Hill', home: 1.90, draw: 3.85, away: 3.70 },
+      { bookmaker: 'Betfair', home: 1.97, draw: 3.78, away: 3.58 }
     ],
     headToHead: {
-      homeWins: 3,
-      draws: 2,
+      homeWins: 5,
+      draws: 3,
       awayWins: 4,
       lastMatches: [
-        { date: '2022-11-15', score: '0-2', winner: 'Australia' },
-        { date: '2017-06-13', score: '4-0', winner: 'Canada' }
+        { date: '2026-03-08', score: '2-1', winner: 'Bayern' },
+        { date: '2025-11-26', score: '1-0', winner: 'PSG' },
+        { date: '2025-09-15', score: '3-0', winner: 'Bayern' }
       ]
     },
     injuries: [
-      { team: 'Canada', player: 'Alphonso Davies', status: 'Fit' },
-      { team: 'Australia', player: 'Aaron Mooy', status: 'Retired' }
+      { team: 'Bayern', player: 'Matthijs de Ligt', status: 'Fit' },
+      { team: 'PSG', player: 'Marquinhos', status: 'Doubtful' }
     ],
     suggestedBets: [
-      { type: 'Match Result', selection: 'Canada Win', odds: 1.95, confidence: 58 },
-      { type: 'Asian Handicap', selection: 'Canada -1', odds: 2.60, confidence: 45 },
-      { type: 'First Half Result', selection: 'Canada', odds: 2.80, confidence: 42 }
+      { type: 'Match Result', selection: 'Bayern Win', odds: 1.95, confidence: 58 },
+      { type: 'Clean Sheet', selection: 'Bayern', odds: 2.30, confidence: 45 },
+      { type: 'Total Goals', selection: 'Under 3.5', odds: 1.70, confidence: 62 }
     ],
     isFeatured: true,
+    isTrending: false
+  },
+  {
+    id: '4',
+    slug: 'inter-milan-vs-milan',
+    homeTeam: 'inter',
+    awayTeam: 'milan',
+    date: '2026-07-23',
+    time: '20:00',
+    venue: 'San Siro, Milan',
+    stage: 'Serie A',
+    result: 'D',
+    homeScore: 0,
+    awayScore: 0,
+    prediction: {
+      winner: 'draw',
+      confidence: 52,
+      predictedScore: { home: 0, away: 0 },
+      analysis: 'The Derby della Madonnina promises to be a tactical battle with both teams canceling each other out.',
+      keyFactors: [
+        'Both teams defensively solid',
+        'Derby intensity',
+        'Tactical chess match expected',
+        'Low-scoring affair likely'
+      ]
+    },
+    odds: [
+      { bookmaker: 'Bet365', home: 2.60, draw: 3.10, away: 2.80 },
+      { bookmaker: 'William Hill', home: 2.55, draw: 3.15, away: 2.85 },
+      { bookmaker: 'Betfair', home: 2.62, draw: 3.08, away: 2.78 }
+    ],
+    headToHead: {
+      homeWins: 9,
+      draws: 8,
+      awayWins: 12,
+      lastMatches: [
+        { date: '2026-04-05', score: '1-2', winner: 'Milan' },
+        { date: '2026-01-28', score: '3-0', winner: 'Inter' },
+        { date: '2025-10-15', score: '1-1', winner: 'Draw' }
+      ]
+    },
+    injuries: [
+      { team: 'Inter', player: 'Lautaro Martínez', status: 'Fit' },
+      { team: 'Milan', player: 'Rafael Leão', status: 'Fit' }
+    ],
+    suggestedBets: [
+      { type: 'Match Result', selection: 'Draw', odds: 3.10, confidence: 52 },
+      { type: 'Under 2.5 Goals', selection: 'Yes', odds: 1.70, confidence: 68 },
+      { type: 'Both Teams to Score', selection: 'No', odds: 1.90, confidence: 55 }
+    ],
+    isFeatured: false,
     isTrending: false
   }
 ]
@@ -687,133 +722,55 @@ export const matches: Match[] = [
 export const blogPosts: BlogPost[] = [
   {
     id: '1',
-    slug: 'world-cup-2026-ultimate-betting-guide',
-    title: 'World Cup 2026: The Ultimate Betting Guide',
-    excerpt: 'Everything you need to know about betting on the FIFA World Cup 2026 - from odds analysis to expert tips.',
+    slug: 'champions-league-prediction-2026',
+    title: 'UEFA Champions League 2026: Who Will Lift the Trophy?',
+    excerpt: 'AI-powered analysis of this season\'s Champions League favorites and dark horses.',
     content: 'Full article content here...',
-    category: 'betting-tips',
-    author: 'Marcus Webb',
-    date: '2026-05-15',
-    readTime: 12,
-    image: '/blog/betting-guide.jpg',
-    tags: ['World Cup', 'Betting Guide', 'Tips']
+    category: 'predictions',
+    author: 'AI Analysis Team',
+    date: '2026-07-10',
+    readTime: 10,
+    image: '/blog/ucl-predictions.jpg',
+    tags: ['Champions League', 'Predictions', 'Analysis']
   },
   {
     id: '2',
-    slug: 'argentina-world-cup-defense-analysis',
-    title: 'Can Argentina Defend Their World Cup Crown?',
-    excerpt: 'A deep dive into Argentina\'s chances of becoming back-to-back World Cup champions.',
+    slug: 'premier-league-title-race-2026',
+    title: 'Premier League Title Race: Who Has the Edge?',
+    excerpt: 'Analyzing the remaining fixtures and key battles in this tight title race.',
     content: 'Full article content here...',
     category: 'analysis',
-    author: 'Sophie Martinez',
-    date: '2026-05-20',
+    author: 'Marcus Webb',
+    date: '2026-07-15',
     readTime: 8,
-    image: '/blog/argentina-analysis.jpg',
-    tags: ['Argentina', 'Analysis', 'Champions']
+    image: '/blog/premier-league.jpg',
+    tags: ['Premier League', 'Title Race', 'Analysis']
   },
   {
     id: '3',
-    slug: 'how-to-watch-world-cup-2026-free',
-    title: 'How to Watch World Cup 2026 for Free: Complete Guide',
-    excerpt: 'Your comprehensive guide to streaming every World Cup match legally and for free.',
+    slug: 'el-clasico-betting-preview',
+    title: 'El Clásico: Ultimate Betting Preview',
+    excerpt: 'Expert betting tips and analysis for the biggest rivalry in world football.',
     content: 'Full article content here...',
-    category: 'streaming',
-    author: 'Tech Team',
-    date: '2026-05-22',
+    category: 'betting-tips',
+    author: 'Sophie Martinez',
+    date: '2026-07-18',
     readTime: 6,
-    image: '/blog/streaming-guide.jpg',
-    tags: ['Streaming', 'Free', 'How To']
+    image: '/blog/el-clasico.jpg',
+    tags: ['El Clásico', 'Betting', 'Preview']
   },
   {
     id: '4',
-    slug: 'mbappe-vs-haaland-who-will-shine',
-    title: 'Mbappé vs Haaland: Who Will Shine at the World Cup?',
-    excerpt: 'The ultimate showdown between two generational talents. Who will define this World Cup?',
-    content: 'Full article content here...',
-    category: 'analysis',
-    author: 'James Foster',
-    date: '2026-05-25',
-    readTime: 10,
-    image: '/blog/mbappe-haaland.jpg',
-    tags: ['Mbappé', 'Haaland', 'Analysis']
-  },
-  {
-    id: '5',
-    slug: 'dark-horses-world-cup-2026',
-    title: '5 Dark Horses That Could Shock the World Cup 2026',
-    excerpt: 'Look beyond the favorites - these teams could be this tournament\'s surprise packages.',
-    content: 'Full article content here...',
-    category: 'predictions',
-    author: 'Marcus Webb',
-    date: '2026-05-28',
-    readTime: 9,
-    image: '/blog/dark-horses.jpg',
-    tags: ['Dark Horses', 'Predictions', 'Upsets']
-  },
-  {
-    id: '6',
-    slug: 'best-accumulators-world-cup-2026',
-    title: 'Best Accumulator Bets for World Cup 2026',
-    excerpt: 'Our AI-powered accumulator picks that offer the best value for group stage matches.',
-    content: 'Full article content here...',
-    category: 'betting-tips',
-    author: 'AI Analysis Team',
-    date: '2026-06-01',
-    readTime: 7,
-    image: '/blog/accumulators.jpg',
-    tags: ['Accumulators', 'Betting', 'Value Bets']
-  },
-  {
-    id: '7',
-    slug: 'usa-home-advantage-analysis',
-    title: 'USA\'s Home Advantage: How Far Can They Go?',
-    excerpt: 'Analyzing the impact of home soil advantage for the USMNT at World Cup 2026.',
-    content: 'Full article content here...',
-    category: 'analysis',
-    author: 'Sarah Johnson',
-    date: '2026-06-03',
-    readTime: 8,
-    image: '/blog/usa-home.jpg',
-    tags: ['USA', 'Home Advantage', 'Analysis']
-  },
-  {
-    id: '8',
-    slug: 'world-cup-var-rule-changes',
-    title: 'VAR and Rule Changes for World Cup 2026 Explained',
-    excerpt: 'New VAR protocols and rule modifications that will impact betting at the World Cup.',
+    slug: 'transfer-window-impact-2026',
+    title: 'How the Summer Transfer Window is Changing European Football',
+    excerpt: 'Major transfers and their impact on the European football landscape.',
     content: 'Full article content here...',
     category: 'news',
-    author: 'Rules Expert',
-    date: '2026-06-05',
-    readTime: 5,
-    image: '/blog/var-rules.jpg',
-    tags: ['VAR', 'Rules', 'FIFA']
-  },
-  {
-    id: '9',
-    slug: 'group-stage-predictions-all-groups',
-    title: 'World Cup 2026 Group Stage: Complete Predictions',
-    excerpt: 'Our AI analyzes every group and predicts which teams will advance.',
-    content: 'Full article content here...',
-    category: 'predictions',
-    author: 'AI Analysis Team',
-    date: '2026-06-08',
-    readTime: 15,
-    image: '/blog/group-predictions.jpg',
-    tags: ['Groups', 'Predictions', 'Qualification']
-  },
-  {
-    id: '10',
-    slug: 'world-cup-betting-strategies',
-    title: 'Proven Betting Strategies for World Cup Success',
-    excerpt: 'Data-driven strategies that have historically performed well at World Cups.',
-    content: 'Full article content here...',
-    category: 'betting-tips',
-    author: 'Analytics Team',
-    date: '2026-06-10',
-    readTime: 11,
-    image: '/blog/strategies.jpg',
-    tags: ['Strategies', 'Data', 'Success']
+    author: 'James Foster',
+    date: '2026-07-20',
+    readTime: 7,
+    image: '/blog/transfers.jpg',
+    tags: ['Transfers', 'Summer Window', 'Impact']
   }
 ]
 
@@ -915,24 +872,4 @@ export function getTodayMatches(): Match[] {
   return matches.filter(match => match.date === today)
 }
 
-export function getBlogPostBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find(post => post.slug === slug)
-}
-
-export function getBlogPostsByCategory(category: string): BlogPost[] {
-  return blogPosts.filter(post => post.category === category)
-}
-
-export function getFeaturedBookmakers(): Bookmaker[] {
-  return bookmakers.filter(bm => bm.featured)
-}
-
-export function getConfidenceLevel(confidence: number): 'high' | 'medium' | 'low' {
-  if (confidence >= 65) return 'high'
-  if (confidence >= 50) return 'medium'
-  return 'low'
-}
-
-export function formatOdds(odds: number): string {
-  return odds.toFixed(2)
-}
+export function getBlogPostBySlug

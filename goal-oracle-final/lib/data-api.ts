@@ -332,3 +332,40 @@ export async function fetchTeamById(id: string): Promise<Team | null> {
 }
 
 export { ACTIVE_COMPETITIONS };
+
+// Get today's matches
+export async function fetchTodaysMatches(): Promise<Match[]> {
+  const matches = await fetchAllMatches();
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return matches.filter(match => match.date === today);
+}
+
+// Get upcoming matches
+export async function fetchUpcomingMatches(): Promise<Match[]> {
+  const matches = await fetchAllMatches();
+
+  const today = new Date().toISOString().split("T")[0];
+
+  return matches
+    .filter(match => match.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+// API health check
+export async function checkApiStatus() {
+  try {
+    await fetchAllMatches();
+
+    return {
+      connected: true,
+      usingFallback: false,
+    };
+  } catch {
+    return {
+      connected: false,
+      usingFallback: true,
+    };
+  }
+}

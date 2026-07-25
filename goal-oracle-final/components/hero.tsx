@@ -21,8 +21,8 @@ export function Hero() {
 
           {/* Headline */}
           <h1 className="max-w-4xl text-balance text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="gradient-text">AI-Powered</span> 2026/27 {" "}
-            <span className="gradient-text">Football</span> Predictions
+            <span className="gradient-text">Smarter Football </span> Predictions. {" "}
+            <span className="gradient-text">Better Betting </span> Decisions.
           </h1>
 
           {/* Subheadline */}

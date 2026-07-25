@@ -2,7 +2,7 @@
 
 export const siteConfig = {
   name: "GoalOracle AI",
-  description: "AI-Powered FIFA World Cup 2026 Predictions. Get expert match analysis, team statistics, betting tips, and live streaming guides for the biggest football tournament.",
+  description: "Goal Oracle AI delivers accurate football predictions, betting tips, match analysis, AI-powered insights, correct score predictions, BTTS tips, over/under predictions, and daily football forecasts for the world's biggest leagues.",
   url: "https://goaloracleai.com",
   ogImage: "https://goaloracleai.com/og-image.jpg",
   links: {

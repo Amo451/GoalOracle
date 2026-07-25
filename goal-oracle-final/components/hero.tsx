@@ -27,8 +27,8 @@ export function Hero() {
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-pretty text-lg text-muted-foreground sm:text-xl">
-            Get expert match predictions, betting tips, and comprehensive analysis powered by 
-            advanced AI technology. Join thousands of winning bettors.
+            Analyze matches faster with AI-powered insights,  confidence scores, and daily predictions across the
+           world's biggest leagues. Join thousands of winning bettors.
           </p>
 
           {/* CTA Buttons */}

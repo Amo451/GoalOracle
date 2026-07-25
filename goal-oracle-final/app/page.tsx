@@ -127,7 +127,7 @@ export default async function HomePage() {
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
               Our advanced AI analyzes millions of data points to deliver the most accurate 
-              World Cup predictions available anywhere.
+              football predictions available anywhere.
             </p>
           </div>
 

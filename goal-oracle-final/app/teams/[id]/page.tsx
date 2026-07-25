@@ -9,7 +9,17 @@ import {
   TrendingDown,
   Users,
   Star,
-  Target
+  Target,
+  MapPin,
+  Calendar,
+  Shield,
+  Award,
+  Activity,
+  ClipboardList,
+  AlertCircle,
+  Footprints,
+  History,
+  Clock
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,6 +32,19 @@ import { teams, matches, getTeamById } from "@/lib/data"
 interface Props {
   params: Promise<{ id: string }>
 }
+
+// Define league types for better organization
+const LEAGUES = {
+  PREMIER_LEAGUE: 'Premier League',
+  LA_LIGA: 'La Liga',
+  BUNDESLIGA: 'Bundesliga',
+  SERIE_A: 'Serie A',
+  LIGUE_1: 'Ligue 1',
+  EREDIVISIE: 'Eredivisie',
+  PRIMEIRA_LIGA: 'Primeira Liga'
+} as const
+
+type League = typeof LEAGUES[keyof typeof LEAGUES]
 
 export async function generateStaticParams() {
   return teams.map((team) => ({
@@ -38,11 +61,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${team.name} - WC 2026 Profile`,
-    description: `${team.name} WC 2026 profile. AI prediction: ${team.tournamentProbability}% chance to win. Squad overview, strengths, weaknesses, and match predictions.`,
+    title: `${team.name} | European Football Analysis & Predictions | Goal Oracle`,
+    description: `Comprehensive analysis of ${team.name} including squad overview, league performance, form guide, strengths, weaknesses, star players, and AI-powered predictions for upcoming European league matches.`,
     openGraph: {
-      title: `${team.name} - WC 2026 | GoalOracle AI`,
-      description: `${team.name} WC 2026 profile with AI predictions and analysis.`,
+      title: `${team.name} | European League Analysis | Goal Oracle AI`,
+      description: `Professional football analysis for ${team.name} featuring AI-powered predictions, performance metrics, and match insights from European leagues.`,
     },
   }
 }
@@ -55,61 +78,120 @@ export default async function TeamPage({ params }: Props) {
     notFound()
   }
 
-  // Get team's upcoming matches
+  // Get all matches for this team
   const teamMatches = matches.filter(
     m => m.homeTeam === team.id || m.awayTeam === team.id
   )
 
+  // Calculate home/away performance metrics
+  const homeMatches = teamMatches.filter(m => m.homeTeam === team.id)
+  const awayMatches = teamMatches.filter(m => m.awayTeam === team.id)
+
+  const homeWinRate = homeMatches.length > 0 
+    ? (homeMatches.filter(m => m.result === 'W').length / homeMatches.length * 100).toFixed(1)
+    : '0'
+
+  const awayWinRate = awayMatches.length > 0
+    ? (awayMatches.filter(m => m.result === 'W').length / awayMatches.length * 100).toFixed(1)
+    : '0'
+
+  // Calculate form trend (last 5 matches)
+  const formTrend = team.form.slice(0, 5)
+  const formPoints = formTrend.reduce((acc, result) => {
+    if (result === 'W') return acc + 3
+    if (result === 'D') return acc + 1
+    return acc
+  }, 0)
+
+  // Get top scorers from team data
+  const topScorers = team.topScorers || [
+    { name: 'Player 1', goals: 12, assists: 4 },
+    { name: 'Player 2', goals: 8, assists: 6 },
+    { name: 'Player 3', goals: 7, assists: 3 },
+  ]
+
+  // Get recent results (last 5 matches with opponents and scores)
+  const recentResults = teamMatches.slice(0, 5).map(match => {
+    const opponent = match.homeTeam === team.id 
+      ? getTeamById(match.awayTeam) 
+      : getTeamById(match.homeTeam)
+    const isHome = match.homeTeam === team.id
+    const scored = match.homeTeam === team.id ? match.homeScore : match.awayScore
+    const conceded = match.homeTeam === team.id ? match.awayScore : match.homeScore
+    
+    return {
+      opponent: opponent?.name || 'Unknown',
+      opponentFlag: opponent?.flag || '🏳️',
+      isHome,
+      scored,
+      conceded,
+      result: scored > conceded ? 'W' : scored < conceded ? 'L' : 'D',
+      date: match.date
+    }
+  })
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-      {/* Breadcrumb */}
+      {/* Breadcrumb Navigation */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-foreground">Home</Link>
+        <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
         <ChevronRight className="h-4 w-4" />
-        <Link href="/teams" className="hover:text-foreground">Teams</Link>
+        <Link href="/leagues" className="hover:text-foreground transition-colors">Leagues</Link>
         <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">{team.name}</span>
+        <Link href={`/leagues/${team.league.toLowerCase()}`} className="hover:text-foreground transition-colors">
+          {team.league}
+        </Link>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-foreground font-medium">{team.name}</span>
       </nav>
 
-      {/* Back button */}
-      <Button asChild variant="ghost" className="mb-6 gap-2">
-        <Link href="/teams">
+      {/* Back Button */}
+      <Button asChild variant="ghost" className="mb-6 gap-2 hover:bg-secondary">
+        <Link href={`/leagues/${team.league.toLowerCase()}`}>
           <ArrowLeft className="h-4 w-4" />
-          Back to Teams
+          Back to {team.league}
         </Link>
       </Button>
 
       {/* Team Header */}
-      <Card className="mb-8">
-        <CardContent className="p-6 lg:p-8">
+      <Card className="mb-8 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
+        <CardContent className="relative p-6 lg:p-8">
           <div className="flex flex-col md:flex-row md:items-center gap-6">
-            <span className="text-7xl lg:text-9xl">{team.flag}</span>
+            <span className="text-7xl lg:text-9xl select-none">{team.flag}</span>
             
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold lg:text-4xl">{team.name}</h1>
-                <Badge>{team.code}</Badge>
-                <Badge variant="outline">Group {team.group}</Badge>
+                <Badge variant="secondary" className="gap-1">
+                  <Award className="h-3 w-3" />
+                  {team.league}
+                </Badge>
+                {team.code && <Badge variant="outline">{team.code}</Badge>}
               </div>
               
-              <p className="text-muted-foreground mb-4">{team.description}</p>
+              <p className="text-muted-foreground mb-4 max-w-2xl">{team.description}</p>
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <div className="text-center p-3 rounded-lg bg-secondary">
                   <p className="text-2xl font-bold">#{team.ranking}</p>
-                  <p className="text-xs text-muted-foreground">FIFA Ranking</p>
+                  <p className="text-xs text-muted-foreground">League Position</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold text-primary">{team.tournamentProbability}%</p>
-                  <p className="text-xs text-muted-foreground">Win Probability</p>
+                  <p className="text-2xl font-bold text-primary">{team.powerRating}%</p>
+                  <p className="text-xs text-muted-foreground">Power Rating</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold">{team.stats.goalsFor}</p>
+                  <p className="text-2xl font-bold text-emerald-500">{team.stats.goalsFor}</p>
                   <p className="text-xs text-muted-foreground">Goals Scored</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-secondary">
-                  <p className="text-2xl font-bold">{team.stats.goalsAgainst}</p>
+                  <p className="text-2xl font-bold text-rose-500">{team.stats.goalsAgainst}</p>
                   <p className="text-xs text-muted-foreground">Goals Conceded</p>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-secondary">
+                  <p className="text-2xl font-bold">±{team.stats.goalDifference}</p>
+                  <p className="text-xs text-muted-foreground">Goal Difference</p>
                 </div>
               </div>
             </div>
@@ -120,114 +202,221 @@ export default async function TeamPage({ params }: Props) {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Form & Stats */}
+          {/* Latest Team Analysis */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-primary" />
-                Recent Form & Statistics
+                <Activity className="h-5 w-5 text-primary" />
+                Latest Team Analysis
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="mb-6">
-                <h4 className="text-sm font-medium mb-3">Last 5 Matches</h4>
-                <div className="flex gap-2">
-                  {team.form.map((result, index) => (
-                    <span
-                      key={index}
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold",
-                        result === 'W' && "bg-primary text-primary-foreground",
-                        result === 'D' && "bg-warning text-warning-foreground",
-                        result === 'L' && "bg-destructive text-destructive-foreground"
-                      )}
-                    >
-                      {result}
-                    </span>
+            <CardContent className="space-y-6">
+              {/* Current Form */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  Current Form
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex gap-2 mb-2">
+                      {formTrend.map((result, index) => (
+                        <span
+                          key={index}
+                          className={cn(
+                            "flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold",
+                            result === 'W' && "bg-emerald-500 text-white",
+                            result === 'D' && "bg-amber-500 text-white",
+                            result === 'L' && "bg-rose-500 text-white"
+                          )}
+                        >
+                          {result}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {formPoints} points from last 5 matches
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Win Rate</span>
+                      <span className="font-medium">
+                        {((formTrend.filter(r => r === 'W').length / 5) * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={(formTrend.filter(r => r === 'W').length / 5) * 100} 
+                      className="h-2" 
+                    />
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Avg Goals/Game</span>
+                      <span className="font-medium">
+                        {(team.stats.goalsFor / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Tactical Style */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <ClipboardList className="h-4 w-4 text-primary" />
+                  Tactical Style
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Formation</span>
+                      <span className="font-medium">{team.formation || '4-3-3'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Playing Style</span>
+                      <span className="font-medium">{team.playingStyle || 'Possession-based'}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Attack Focus</span>
+                      <span className="font-medium">{team.attackFocus || 'Wide play'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Defensive Style</span>
+                      <span className="font-medium">{team.defensiveStyle || 'High press'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Key Injuries */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-rose-500" />
+                  Key Injuries & Suspensions
+                </h4>
+                {team.injuries && team.injuries.length > 0 ? (
+                  <div className="space-y-2">
+                    {team.injuries.map((injury, index) => (
+                      <div key={index} className="flex items-center justify-between rounded-lg border border-border p-3">
+                        <div>
+                          <p className="font-medium text-sm">{injury.player}</p>
+                          <p className="text-xs text-muted-foreground">{injury.status}</p>
+                        </div>
+                        <Badge variant="outline" className="text-rose-500 border-rose-500">
+                          {injury.returnDate || 'Out indefinitely'}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No significant injuries reported</p>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Top Scorers */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <Footprints className="h-4 w-4 text-primary" />
+                  Top Scorers
+                </h4>
+                <div className="space-y-2">
+                  {topScorers.map((scorer, index) => (
+                    <div key={index} className="flex items-center justify-between rounded-lg border border-border p-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-muted-foreground">#{index + 1}</span>
+                        <div>
+                          <p className="font-medium text-sm">{scorer.name}</p>
+                          <p className="text-xs text-muted-foreground">{scorer.assists} assists</p>
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="text-lg font-bold">
+                        {scorer.goals} goals
+                      </Badge>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <Separator className="my-6" />
+              <Separator />
 
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-3xl font-bold text-primary">{team.stats.wins}</p>
-                  <p className="text-sm text-muted-foreground">Wins</p>
+              {/* Head-to-Head Trends */}
+              <div>
+                <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                  <History className="h-4 w-4 text-primary" />
+                  Head-to-Head Trends
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-lg border border-border p-4 text-center">
+                    <p className="text-2xl font-bold text-emerald-500">{team.h2hWins || 0}</p>
+                    <p className="text-xs text-muted-foreground">Wins</p>
+                  </div>
+                  <div className="rounded-lg border border-border p-4 text-center">
+                    <p className="text-2xl font-bold text-amber-500">{team.h2hDraws || 0}</p>
+                    <p className="text-xs text-muted-foreground">Draws</p>
+                  </div>
+                  <div className="rounded-lg border border-border p-4 text-center">
+                    <p className="text-2xl font-bold text-rose-500">{team.h2hLosses || 0}</p>
+                    <p className="text-xs text-muted-foreground">Losses</p>
+                  </div>
+                  <div className="rounded-lg border border-border p-4 text-center">
+                    <p className="text-2xl font-bold text-primary">{team.h2hGoalsScored || 0}</p>
+                    <p className="text-xs text-muted-foreground">Goals Scored</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-3xl font-bold">{team.stats.draws}</p>
-                  <p className="text-sm text-muted-foreground">Draws</p>
-                </div>
-                <div>
-                  <p className="text-3xl font-bold text-destructive">{team.stats.losses}</p>
-                  <p className="text-sm text-muted-foreground">Losses</p>
-                </div>
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  Last 5 meetings against top 6 rivals
+                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Strengths & Weaknesses */}
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-primary">
-                  <TrendingUp className="h-5 w-5" />
-                  Strengths
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {team.strengths.map((strength, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />
-                      <span className="text-sm">{strength}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-destructive">
-                  <TrendingDown className="h-5 w-5" />
-                  Weaknesses
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {team.weaknesses.map((weakness, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="h-2 w-2 rounded-full bg-destructive mt-2 shrink-0" />
-                      <span className="text-sm">{weakness}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Star Players */}
+          {/* Recent Results */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-primary" />
-                Star Players
+                <Clock className="h-5 w-5 text-primary" />
+                Recent Results
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {team.starPlayers.map((player, index) => (
-                  <div key={index} className="rounded-lg border border-border p-4 text-center">
-                    <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
-                      <Users className="h-8 w-8 text-muted-foreground" />
+              <div className="space-y-3">
+                {recentResults.map((result, index) => (
+                  <div key={index} className="flex items-center justify-between rounded-lg border border-border p-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{result.opponentFlag}</span>
+                      <div>
+                        <p className="font-medium">{result.opponent}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {result.isHome ? 'Home' : 'Away'} • {result.date}
+                        </p>
+                      </div>
                     </div>
-                    <h4 className="font-semibold">{player.name}</h4>
-                    <p className="text-sm text-muted-foreground">{player.position}</p>
-                    <div className="mt-2 flex items-center justify-center gap-1">
-                      <Star className="h-4 w-4 fill-primary text-primary" />
-                      <span className="font-bold">{player.rating}</span>
+                    <div className="flex items-center gap-3">
+                      <span className={cn(
+                        "font-bold text-lg",
+                        result.result === 'W' && "text-emerald-500",
+                        result.result === 'L' && "text-rose-500",
+                        result.result === 'D' && "text-amber-500"
+                      )}>
+                        {result.scored} - {result.conceded}
+                      </span>
+                      <Badge 
+                        variant="outline"
+                        className={cn(
+                          result.result === 'W' && "border-emerald-500 text-emerald-500",
+                          result.result === 'L' && "border-rose-500 text-rose-500",
+                          result.result === 'D' && "border-amber-500 text-amber-500"
+                        )}
+                      >
+                        {result.result}
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -235,26 +424,33 @@ export default async function TeamPage({ params }: Props) {
             </CardContent>
           </Card>
 
-          {/* Team Matches */}
+          {/* Upcoming Fixtures */}
           {teamMatches.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Upcoming Matches</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  Upcoming Fixtures
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {teamMatches.map((match) => {
+                {teamMatches.slice(0, 5).map((match) => {
                   const opponent = match.homeTeam === team.id 
                     ? getTeamById(match.awayTeam) 
                     : getTeamById(match.homeTeam)
                   const isHome = match.homeTeam === team.id
 
+                  if (!opponent) return null
+
                   return (
                     <Link key={match.id} href={`/predictions/${match.slug}`}>
-                      <div className="flex items-center justify-between rounded-lg border border-border p-4 transition-smooth hover:border-primary/50 hover:bg-secondary/50">
+                      <div className="flex items-center justify-between rounded-lg border border-border p-4 transition-all hover:border-primary/50 hover:bg-secondary/50 hover:shadow-sm">
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl">{opponent?.flag}</span>
+                          <span className="text-2xl">{opponent.flag}</span>
                           <div>
-                            <p className="font-medium">vs {opponent?.name}</p>
+                            <p className="font-medium">
+                              {isHome ? 'vs' : '@'} {opponent.name}
+                            </p>
                             <p className="text-xs text-muted-foreground">
                               {isHome ? 'Home' : 'Away'} • {match.date}
                             </p>
@@ -275,46 +471,66 @@ export default async function TeamPage({ params }: Props) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Tournament Prediction */}
+          {/* AI Analysis Card */}
           <Card className="sticky top-24">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-primary" />
-                Tournament Prediction
+                <Shield className="h-5 w-5 text-primary" />
+                AI Performance Analysis
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center mb-6">
-                <p className="text-5xl font-bold text-primary">{team.tournamentProbability}%</p>
-                <p className="text-sm text-muted-foreground mt-1">Chance to Win World Cup</p>
+                <p className="text-5xl font-bold text-primary">{team.overallRating}%</p>
+                <p className="text-sm text-muted-foreground mt-1">Team Performance Index</p>
               </div>
               
-              <Progress value={team.tournamentProbability} className="h-3 mb-6" />
+              <Progress value={team.overallRating} className="h-3 mb-6" />
               
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Group Stage</span>
-                  <span className="font-medium">98% to qualify</span>
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">AI Rating</span>
+                  <span className="font-medium">{team.aiRating}/100</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Quarter-Final</span>
-                  <span className="font-medium">72% to reach</span>
+
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">League Position</span>
+                  <span className="font-medium">#{team.ranking}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Semi-Final</span>
-                  <span className="font-medium">48% to reach</span>
+
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">Goals Scored (Avg)</span>
+                  <span className="font-medium">{team.stats.goalsFor} ({(team.stats.goalsFor / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)})</span>
                 </div>
+
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">Goals Conceded (Avg)</span>
+                  <span className="font-medium">{team.stats.goalsAgainst} ({(team.stats.goalsAgainst / (team.stats.wins + team.stats.draws + team.stats.losses || 1)).toFixed(1)})</span>
+                </div>
+
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">Goal Difference</span>
+                  <span className={cn(
+                    "font-medium",
+                    team.stats.goalDifference > 0 && "text-emerald-500",
+                    team.stats.goalDifference < 0 && "text-rose-500"
+                  )}>
+                    {team.stats.goalDifference > 0 ? '+' : ''}{team.stats.goalDifference}
+                  </span>
+                </div>
+
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Final</span>
-                  <span className="font-medium">28% to reach</span>
+                  <span className="text-muted-foreground">Recent Form</span>
+                  <span className="font-medium">{team.form.join(" ")}</span>
                 </div>
               </div>
 
               <Separator className="my-6" />
 
-              <Button asChild className="w-full">
-                <Link href="/predictions">
-                  View All {team.name} Predictions
+              <Button asChild className="w-full gap-2">
+                <Link href={`/predictions?team=${team.id}`}>
+                  <Trophy className="h-4 w-4" />
+                  View Predictions for {team.name}
                 </Link>
               </Button>
             </CardContent>
